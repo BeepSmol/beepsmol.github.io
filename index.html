@@ -4,99 +4,92 @@
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeepSmol</title>
+    <title>BeepSmol</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Retro 90s Web Aesthetics */
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+        
         body {
-            background-color: #000;
-            color: rgb(255, 123, 0);
-            font-family: "Courier New", Courier, monospace;
-            margin: 0;
-            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            /* Your original background */
+            background-color: #0f172a; 
+            background: radial-gradient(circle at top left, #e46f108f, #cabc008a), #0f172a;
+            background-attachment: fixed;
+            color: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Neutralized the glass panel color slightly to reduce clashing.
+           It's now a bit darker and less "blue" to sit better on the orange gradient.
+        */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            transition: all 0.4s ease;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
+        }
+
+        /* Social Button Styling */
+        .social-btn {
+            width: 45px;
+            height: 45px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            text-transform: uppercase;
+            justify-content: center;
+            border-radius: 12px; /* Slightly squarer for a modern look */
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
         }
 
-        /* The Scrolling Caution Tape Container */
-        .tape-container {
+        .social-btn:hover {
+            background: white;
+            /* Color is set via JS per button now */
+            transform: translateY(-3px);
+        }
+
+        /* Hero Image Container */
+        .hero-image-container {
+            position: relative;
             width: 100%;
-            background: #ffd700; /* Classic Yellow */
-            border-top: 4px solid #000;
-            border-bottom: 4px solid #000;
-            padding: 15px 0;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%) rotate(-2deg); /* Slight tilt for retro feel */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            max-width: 350px;
+            aspect-ratio: 1/1;
+            border-radius: 24px;
             overflow: hidden;
-            white-space: nowrap;
+            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Animated Text */
-        .tape-text {
-            display: inline-block;
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #000;
-            animation: scroll 10s linear infinite;
-        }
-
-        @keyframes scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
-
-        /* Branding / Content */
-        .content {
-            z-index: 10;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border: 2px solid #555;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin: 0;
-            letter-spacing: 5px;
-            text-shadow: 3px 3px rgb(255, 238, 0);
-        }
-
-        p {
-            margin-top: 10px;
-            font-size: 1.2rem;
-            color: rgb(0, 132, 255);
-        }
-
-        /* CRT Scanline Effect Overlay */
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .hero-image {
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                rgba(18, 16, 16, 0) 50%, 
-                rgba(0, 0, 0, 0.25) 50%
-            ), linear-gradient(
-                90deg, 
-                rgba(255, 0, 0, 0.06), 
-                rgba(0, 255, 0, 0.02), 
-                rgba(0, 0, 118, 0.06)
-            );
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
+            object-fit: cover;
+            transition: transform 0.5s ease;
         }
+
+        .hero-image-container:hover .hero-image {
+            transform: scale(1.05);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body>
-<style>
+<body class="p-6 md:p-12">
+  <style>
   :root {
     --cozy-bg: #fffcf5;       /* Warm cream */
     --cozy-text: #5d4a44;     /* Soft brown */
@@ -213,7 +206,7 @@
 </style>
 
 <nav class="nav-container" id="main-nav">
-  <a href="#" class="logo">
+  <a href="https://beepsmol.com" class="logo">
     <img src="icon.ico" alt="Logo" class="logo-icon"> 
     BeepSmol
   </a>
@@ -253,27 +246,155 @@
     link.addEventListener('click', () => list.classList.remove('active'));
   });
 </script>
-    <div class="scanlines"></div>
+    
+    <!-- PLACE YOUR NAVIGATION BAR HERE -->
 
-    <div class="content">
-        <h1>WEBSITE UNDER CONSTRUCTION</h1>
-        <p>beep beep i'm a sheep</p>
-    </div>
+    <main class="max-w-6xl mx-auto pt-12 md:pt-20">
+        
+        <!-- Hero Section -->
+        <div class="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 mb-16">
+            
+            <!-- Left Side: Text -->
+            <div class="lg:w-1/2 space-y-6 text-center lg:text-left">
+                <div class="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase text-orange-200 mb-2">
+                    Welcome
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight">
+                    Hi, I'm <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-yellow-100">BeepSmol</span>
+                </h1>
+                
+                <p class="text-lg text-slate-200 leading-relaxed max-w-lg mx-auto lg:mx-0">
+                    I create digital experiences, interactive games, and lo-fi beats. 
+                    This is my corner of the internet.
+                </p>
+                
+                <!-- Social Links Container (Populated by JS) -->
+                <div id="socials-container" class="flex gap-4 pt-4 justify-center lg:justify-start">
+                    <!-- JS injects buttons here -->
+                </div>
+            </div>
 
-    <div class="tape-container">
-        <div class="tape-text">
-            &nbsp;⚠ UNDER CONSTRUCTION ⚠ WORK IN PROGRESS ⚠ DO NOT CROSS ⚠ KEEP OUT ⚠ UNDER CONSTRUCTION ⚠ WORK IN PROGRESS ⚠ DO NOT CROSS ⚠ KEEP OUT ⚠
-            &nbsp;⚠ UNDER CONSTRUCTION ⚠ WORK IN PROGRESS ⚠ DO NOT CROSS ⚠ KEEP OUT ⚠ UNDER CONSTRUCTION ⚠ WORK IN PROGRESS ⚠ DO NOT CROSS ⚠ KEEP OUT ⚠
+            <!-- Right Side: The "Box" (Profile Picture / Hero Art) -->
+            <div class="lg:w-1/2 flex justify-center lg:justify-end">
+                <div class="hero-image-container">
+                    <!-- 
+                        THIS IS YOUR PFP / HERO IMAGE 
+                        Replace 'icon.ico' with 'me.png' or any image you want to represent you.
+                    -->
+                    <img src="icon.ico" 
+                         onerror="this.src='https://via.placeholder.com/600x600/1e293b/ffffff?text=BeepSmol'" 
+                         alt="BeepSmol Avatar" 
+                         class="hero-image">
+                </div>
+            </div>
         </div>
-    </div>
 
+        <!-- Content Grid (About & Status) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- About Card (Takes up 2 columns) -->
+            <div class="glass-panel p-8 md:col-span-2">
+                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3 text-white">
+                    <i class="fas fa-ghost text-orange-300"></i> About Me
+                </h3>
+                <p class="text-slate-300 leading-relaxed mb-4">
+                    I'm a passionate developer creating small, fun experiences on the web. Whether it's coding up a new platformer in JS or composing a lo-fi track for late-night studying, I love making things that people can enjoy.
+                </p>
+                <p class="text-slate-300 leading-relaxed">
+                    This website serves as a portfolio for all my finished projects. Use the navigation bar above to check out my Games or Music collection.
+                </p>
+            </div>
+
+            <!-- Status Card (Takes up 1 column) -->
+            <div class="glass-panel p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                <!-- Decorative background glow for status -->
+                <div class="absolute top-0 right-0 w-24 h-24 bg-green-500/10 blur-2xl rounded-full -mr-10 -mt-10"></div>
+                
+                <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-3 relative">
+                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+                </div>
+                
+                <h3 class="text-lg font-bold text-white mb-2">Current Status</h3>
+                <p class="text-slate-300 text-sm">
+                    Currently working on a new platformer game engine!
+                </p>
+            </div>
+
+        </div>
+        
+        <footer class="mt-20 text-center text-slate-400/60 text-sm pb-8">
+            <p>&copy; <script>document.write(new Date().getFullYear())</script> BeepSmol</p>
+        </footer>
+
+    </main>
+
+    <script>
+        /**
+         * SOCIAL MEDIA CONFIGURATION
+         * Add or remove items here to update your links!
+         * * 'icon': The FontAwesome class (e.g., 'fab fa-twitter', 'fas fa-envelope')
+         * 'color': The color the icon turns when hovered
+         */
+        const SOCIALS = [
+            { 
+                name: "YouTube", 
+                url: "https://youtube.com", 
+                icon: "fab fa-youtube", 
+                color: "#ff0000" 
+            },
+            { 
+                name: "Discord", 
+                url: "https://discord.com", 
+                icon: "fab fa-discord", 
+                color: "#5865F2" 
+            }
+            // Example of how to add more:
+            // { name: "Twitter", url: "https://twitter.com", icon: "fab fa-twitter", color: "#1DA1F2" }
+        ];
+
+        function renderSocials() {
+            const container = document.getElementById('socials-container');
+            container.innerHTML = '';
+
+            SOCIALS.forEach(social => {
+                const link = document.createElement('a');
+                link.href = social.url;
+                link.target = "_blank";
+                link.className = "social-btn group";
+                link.innerHTML = `<i class="${social.icon}"></i>`;
+                
+                // Add hover color dynamically
+                link.addEventListener('mouseenter', () => {
+                    link.style.color = social.color;
+                    link.style.borderColor = social.color; // Optional: adds a border on hover
+                });
+                link.addEventListener('mouseleave', () => {
+                    link.style.color = 'white';
+                    link.style.borderColor = 'transparent';
+                });
+
+                container.appendChild(link);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSocials();
+            
+            // Simple entry animation
+            const panels = document.querySelectorAll('.glass-panel');
+            panels.forEach((panel, index) => {
+                panel.style.opacity = '0';
+                panel.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    panel.style.transition = 'all 0.6s ease';
+                    panel.style.opacity = '1';
+                    panel.style.transform = 'translateY(0)';
+                }, 100 * (index + 1));
+            });
+        });
+    </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
