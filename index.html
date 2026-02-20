@@ -4,397 +4,454 @@
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeepSmol</title> 
+    <title>BeepSmol | Welcome!</title> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Quicksand:wght@400;700&display=swap');
         
+        :root {
+            --bg-dark: #1a1a2e; /* Deep dark purple/blue */
+            --panel-bg: #2d3436; /* Dark grey panels */
+            --text-main: #f1f5f9;
+            --purple-accent: #a29bfe; /* Lighter purple for dark mode visibility */
+            --yellow-accent: #facc15;
+            --indie-border: 4px solid #000000;
+        }
+
         body {
             font-family: 'Quicksand', sans-serif;
-            /* Your original background */
-            background-color: #0f172a; 
-            background: radial-gradient(circle at top left, #e46f108f, #cabc008a), #0f172a;
-            background-attachment: fixed;
-            color: #f1f5f9;
-            min-height: 100vh;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
             overflow-x: hidden;
         }
 
-        /* Neutralized the glass panel color slightly to reduce clashing.
-           It's now a bit darker and less "blue" to sit better on the orange gradient.
-        */
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            transition: all 0.4s ease;
+        /* --- Minesweeper Background Layer --- */
+        #minesweeper-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: grid;
+            opacity: 0.3; /* Subtle for dark mode */
+            pointer-events: auto;
+            /* Ensure cells are centered and sized properly */
+            justify-content: center;
+            align-content: start;
         }
 
-        .glass-panel:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
-        }
-
-        /* Social Button Styling */
-        .social-btn {
-            width: 45px;
-            height: 45px;
+        .mine-cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(162, 155, 254, 0.1);
+            background: rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px; /* Slightly squarer for a modern look */
-            background: rgba(255,255,255,0.05);
-            color: white;
-            font-size: 1.4rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            border: 1px solid transparent;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.1s;
+            box-sizing: border-box;
         }
 
-        .social-btn:hover {
-            background: white;
-            /* Color is set via JS per button now */
-            transform: translateY(-3px);
+        .mine-cell:hover {
+            background: rgba(250, 204, 21, 0.2);
         }
 
-        /* Hero Image Container */
-        .hero-image-container {
+        .mine-cell.revealed {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: default;
+        }
+
+        .mine-cell.mine {
+            background: #ff7675;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        /* --- Main Layout --- */
+        .site-container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
             position: relative;
+            z-index: 10;
+            pointer-events: none; 
+        }
+
+        .site-container > * {
+            pointer-events: auto;
+        }
+
+        .content-box {
+            background: var(--panel-bg);
+            border: var(--indie-border);
+            margin-bottom: 30px;
+            box-shadow: 8px 8px 0px var(--purple-accent);
+            position: relative;
+        }
+
+        .box-title {
+            background: var(--purple-accent);
+            color: #1a1a2e; /* Dark text for contrast on light purple */
+            padding: 2px 15px;
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            display: inline-block;
+            margin-top: -18px;
+            margin-left: 15px;
+            border: var(--indie-border);
+            font-weight: bold;
+        }
+
+        .box-body { padding: 25px; }
+
+        .marquee-box {
+            background: #000000;
+            color: var(--yellow-accent);
+            padding: 8px;
+            font-family: 'VT323', monospace;
+            border: var(--indie-border);
+            margin-bottom: 30px;
+            box-shadow: 4px 4px 0px var(--yellow-accent);
+        }
+
+        .sidebar-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-layout { grid-template-columns: 1fr; }
+        }
+
+        .profile-pic-container {
+            background: var(--yellow-accent);
+            border: var(--indie-border);
+            padding: 8px;
+            margin-bottom: 15px;
+            box-shadow: 4px 4px 0px var(--purple-accent);
+        }
+
+        .profile-pic {
             width: 100%;
-            max-width: 350px;
-            aspect-ratio: 1/1;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            display: block;
+            border: 2px solid #000;
+            filter: contrast(1.1);
         }
 
-        .hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--yellow-accent);
+            border: 2px solid #000;
+            color: #000;
+            font-size: 1.2rem;
+            margin: 0 5px;
+            box-shadow: 2px 2px 0px #000;
         }
 
-        .hero-image-container:hover .hero-image {
-            transform: scale(1.05);
+        .social-link:hover {
+            background: var(--purple-accent);
+            color: #000;
+            transform: translateY(-2px);
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        footer {
+            margin: 50px 0;
+            text-align: center;
+            font-family: 'VT323', monospace;
+            color: var(--yellow-accent);
+            background: #000;
+            padding: 10px 20px;
+            border: 2px solid var(--purple-accent);
+            display: block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #55efc4;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            border: 1px solid #000;
+        }
+
+        a { color: var(--yellow-accent); transition: 0.2s; }
+        a:hover { color: var(--purple-accent); }
+
+        /* Typography tweaks for dark mode */
+        h3 { color: var(--purple-accent); }
     </style>
 </head>
-<body class="p-6 md:p-12">
-  <style>
-  :root {
-    --cozy-bg: #fffcf5;       /* Warm cream */
-    --cozy-text: #5d4a44;     /* Soft brown */
-    --cozy-accent: #d97757;   /* Muted terracotta */
-    --cozy-shadow: 0 8px 30px rgba(93, 74, 68, 0.15);
-    --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
+<body>
 
-  .nav-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 1000px;
-    background-color: var(--cozy-bg);
-    padding: 12px 30px;
-    border-radius: 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: var(--cozy-shadow);
-    z-index: 9999;
-    font-family: 'Quicksand', 'Segoe UI', sans-serif;
-    transition: var(--transition);
-  }
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Quicksand:wght@400;700&display=swap');
+    
+    :root {
+        --bg-dark: #1a1a2e;
+        --panel-dark: #2d3436;
+        --purple-accent: #a29bfe;
+        --yellow-accent: #facc15;
+        --indie-border: 4px solid #000000;
+    }
 
-  .nav-container.shrunk {
-    top: 10px;
-    padding: 8px 25px;
-    width: 85%;
-    background-color: #ffffff;
-  }
+    .nav-wrapper {
+        background: var(--bg-dark);
+        border-bottom: var(--indie-border);
+        padding: 15px 10px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        text-align: center;
+        box-shadow: 0 6px 0px var(--purple-accent);
+    }
 
-  .logo {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--cozy-accent);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+    .nav-title {
+        font-family: 'VT323', monospace;
+        font-size: 2.8rem;
+        color: var(--yellow-accent);
+        text-shadow: 3px 3px 0px #000;
+        margin-bottom: 12px;
+        display: block;
+        text-decoration: none;
+        letter-spacing: 2px;
+    }
 
-  /* Specific styling for your .ico file */
-  .logo-icon {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    border-radius: 4px; /* Optional: adds a tiny roundness to the icon */
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 25px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .nav-links a {
-    text-decoration: none;
-    color: var(--cozy-text);
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 8px 15px;
-    border-radius: 20px;
-    transition: var(--transition);
-  }
-
-  .nav-links a:hover {
-    background-color: #f3ece4;
-    color: var(--cozy-accent);
-    transform: translateY(-2px);
-  }
-
-  .cozy-burger {
-    display: none;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 5px;
-  }
-
-  .cozy-burger div {
-    width: 22px;
-    height: 3px;
-    background: var(--cozy-text);
-    margin: 4px;
-    border-radius: 3px;
-    transition: 0.3s;
-  }
-
-  @media (max-width: 768px) {
-    .cozy-burger { display: block; }
     .nav-links {
-      position: absolute;
-      top: 70px;
-      right: 0;
-      background: var(--cozy-bg);
-      flex-direction: column;
-      width: 200px;
-      padding: 20px;
-      border-radius: 25px;
-      box-shadow: var(--cozy-shadow);
-      transform: scale(0);
-      transform-origin: top right;
-      transition: var(--transition);
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
     }
-    .nav-links.active {
-      transform: scale(1);
+
+    .nav-links a {
+        background: var(--purple-accent);
+        color: #1a1a2e;
+        border: 2px solid #000;
+        padding: 6px 16px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 0.9rem;
+        font-family: 'Quicksand', sans-serif;
+        box-shadow: 3px 3px 0px #000;
+        transition: all 0.1s;
+        text-transform: uppercase;
     }
-  }
+
+    .nav-links a:hover {
+        background: var(--yellow-accent);
+        transform: translate(-2px, -2px);
+        box-shadow: 5px 5px 0px #000;
+    }
+
+    .nav-links a:active {
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0px #000;
+    }
 </style>
 
-<nav class="nav-container" id="main-nav">
-  <a href="https://beepsmol.com" class="logo">
-    <img src="icon.ico" alt="Logo" class="logo-icon"> 
-    BeepSmol
-  </a>
-  
-  <ul class="nav-links" id="nav-list">
-    <li><a href="https://beepsmol.com">Home</a></li>
-    <li><a href="https://beepsmol.com/games">Games</a></li>
-    <li><a href="https://beepsmol.com/music">Music</a></li>
-    <li><a href="https://beepsmol.com/links">Links</a></li>
-    <li><a href="https://beepsmol.com/blog">Blog</a></li>
-  </ul>
+<div class="nav-wrapper">
+    <a href="index.html" class="nav-title">BEEPSMOL.COM</a>
+    <div class="nav-links">
+    <a href="https://beepsmol.com">Home</a></li>
+    <a href="https://beepsmol.com/games">Games</a>
+    <a href="https://beepsmol.com/music">Music</a>
+    <a href="https://beepsmol.com/links">Links</a>
+    <a href="https://beepsmol.com/blog">Blog</a>
+    </div>
+</div>
 
-  <button class="cozy-burger" id="menu-btn">
-    <div></div>
-    <div></div>
-    <div></div>
-  </button>
-</nav>
-
-<script>
-  const nav = document.getElementById('main-nav');
-  const btn = document.getElementById('menu-btn');
-  const list = document.getElementById('nav-list');
-
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 40) {
-      nav.classList.add('shrunk');
-    } else {
-      nav.classList.remove('shrunk');
-    }
-  });
-
-  btn.addEventListener('click', () => {
-    list.classList.toggle('active');
-  });
-
-  document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => list.classList.remove('active'));
-  });
-</script>
+    <!-- Background Game Layer -->
+    <div id="minesweeper-bg"></div>
     
-    <!-- PLACE YOUR NAVIGATION BAR HERE -->
-
-    <main class="max-w-6xl mx-auto pt-12 md:pt-20">
-        
-        <!-- Hero Section -->
-        <div class="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 mb-16">
-            
-            <!-- Left Side: Text -->
-            <div class="lg:w-1/2 space-y-6 text-center lg:text-left">
-                <div class="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold tracking-widest uppercase text-orange-200 mb-2">
-                    Welcome
-                </div>
-                
-                <h1 class="text-5xl md:text-7xl font-bold text-white tracking-tight leading-tight">
-                    Hi, I'm <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-yellow-100">BeepSmol</span>
-                </h1>
-                
-                <p class="text-lg text-slate-200 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                    I'm a Game developer, Music producer, and Youtuber. Beep Beep I'm A Sheep.
-                </p>
-                
-                <!-- Social Links Container (Populated by JS) -->
-                <div id="socials-container" class="flex gap-4 pt-4 justify-center lg:justify-start">
-                    <!-- JS injects buttons here -->
-                </div>
-            </div>
-
-            <!-- Right Side: The "Box" (Profile Picture / Hero Art) -->
-            <div class="lg:w-1/2 flex justify-center lg:justify-end">
-                <div class="hero-image-container">
-                    <!-- 
-                        THIS IS YOUR PFP / HERO IMAGE 
-                        Replace 'icon.ico' with 'me.png' or any image you want to represent you.
-                    -->
-                    <img src="placeholder.png" 
-                         onerror="this.src='https://via.placeholder.com/600x600/1e293b/ffffff?text=BeepSmol'" 
-                         alt="BeepSmol" 
-                         class="hero-image">
-                </div>
-            </div>
+    <div class="site-container">
+        <div class="marquee-box">
+            <marquee scrollamount="6">BEEP BEEP IM A SHEEP | I LIKE MAKING STUFF</marquee>
         </div>
 
-        <!-- Content Grid (About & Status) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- About Card (Takes up 2 columns) -->
-            <div class="glass-panel p-8 md:col-span-2">
-                <h3 class="text-2xl font-bold mb-4 flex items-center gap-3 text-white">
-                    <i class="fas fa-ghost text-orange-300"></i> About Me
-                </h3>
-                <p class="text-slate-300 leading-relaxed mb-4">
-                    I like coding, making games, and producing music and sometimes films.
-                </p>
-                <p class="text-slate-300 leading-relaxed">
-                    This website is kind of a portfolio type thing where I also just do random stuff too.
-                </p>
-            </div>
-
-            <!-- Status Card (Takes up 1 column) -->
-            <div class="glass-panel p-8 flex flex-col justify-center items-center text-center relative overflow-hidden">
-                <!-- Decorative background glow for status -->
-                <div class="absolute top-0 right-0 w-24 h-24 bg-green-500/10 blur-2xl rounded-full -mr-10 -mt-10"></div>
-                
-                <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-3 relative">
-                    <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+        <div class="sidebar-layout">
+            <!-- Sidebar -->
+            <aside>
+                <div class="content-box">
+                    <span class="box-title">ME!</span>
+                    <div class="box-body text-center">
+                        <div class="profile-pic-container">
+                            <img src="placeholder.png" 
+                                 onerror="this.src='https://via.placeholder.com/300/facc15/6c5ce7?text=BeepSmol'" 
+                                 alt="BeepSmol" 
+                                 class="profile-pic">
+                        </div>
+                        <h2 class="font-bold text-lg uppercase tracking-tighter text-yellow-400">BeepSmol</h2>
+                        <p class="text-[11px] mb-4 text-gray-400 font-bold italic">Game Dev / Music Maker</p>
+                        
+                        <div class="flex justify-center mt-2">
+                            <a href="https://www.youtube.com/@beepsmol" class="social-link"><i class="fab fa-youtube"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
+                        </div>
+                    </div>
                 </div>
-                
-                <h3 class="text-lg font-bold text-white mb-2">Current Status</h3>
-                <p class="text-slate-300 text-sm">
-                    Busy developing this website.
-                </p>
-            </div>
 
+                <div class="content-box">
+                    <span class="box-title">RELEVANT LINKS</span>
+                    <div class="box-body text-sm">
+                        <ul class="space-y-2 font-bold">
+                            <li><a href="#">→ My Portfolio</a></li>
+                            <li><a href="#">→ Cool Sites</a></li>
+                            <li><a href="#">→ Guestbook</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main -->
+            <main>
+                <div class="content-box">
+                    <span class="box-title">ABOUT ME</span>
+                    <div class="box-body">
+                        <h3 class="text-3xl font-bold mb-4">Hi, I'm BeepSmol!</h3>
+                        <p class="mb-4 leading-relaxed text-gray-200">
+                            Welcome to my corner of the internet. I'm a <span class="bg-purple-900/50 text-yellow-400 px-1 border-b-2 border-yellow-400">Game developer</span>, 
+                            <span class="bg-purple-900/50 text-yellow-400 px-1 border-b-2 border-yellow-400">Music producer</span>, and YouTuber.
+                        </p>
+                        <p class="mb-4 text-gray-300">
+                            I like coding, making games, and producing music. This website is where I keep all my stuff and just hang out.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <span class="box-title">STATUS</span>
+                    <div class="box-body">
+                        <div class="bg-black/40 border-2 border-purple-500 p-4 flex items-center">
+                            <div class="status-dot animate-pulse"></div>
+                            <span class="font-bold text-sm uppercase text-gray-100">Currently: Rebranding the site!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-8">
+                    <img src="sheepy.png" alt="Stamp" class="inline-block mx-1 border border-black filter brightness-90">
+                    <img src="beepy.png" alt="Stamp" class="inline-block mx-1 border border-black filter brightness-90">
+                </div>
+            </main>
         </div>
-        
-        <footer class="mt-20 text-center text-slate-400/60 text-sm pb-8">
-            <p>&copy; <script>document.write(new Date().getFullYear())</script> BeepSmol</p>
+
+        <footer>
+            <p>BEEPSMOL &copy; 2026</p>
         </footer>
-
-    </main>
+    </div>
 
     <script>
-        /**
-         * SOCIAL MEDIA CONFIGURATION
-         * Add or remove items here to update your links!
-         * * 'icon': The FontAwesome class (e.g., 'fab fa-twitter', 'fas fa-envelope')
-         * 'color': The color the icon turns when hovered
-         */
-        const SOCIALS = [
-            { 
-                name: "YouTube", 
-                url: "https://www.youtube.com/@beepsmol", 
-                icon: "fab fa-youtube", 
-                color: "#ff0000" 
-            },
-            { 
-                name: "Discord", 
-                url: "https://discord.com", 
-                icon: "fab fa-discord", 
-                color: "#5865F2" 
-            }
-            // Example of how to add more:
-            // { name: "Twitter", url: "https://twitter.com", icon: "fab fa-twitter", color: "#1DA1F2" }
-        ];
+        const container = document.getElementById('minesweeper-bg');
+        const cellSize = 40; // Fixed size for squares
+        const mineProbability = 0.12;
+        let rows, cols;
 
-        function renderSocials() {
-            const container = document.getElementById('socials-container');
+        function initGame() {
             container.innerHTML = '';
+            // Calculate how many fixed-size cells fit in the viewport
+            cols = Math.ceil(window.innerWidth / cellSize);
+            rows = Math.ceil(window.innerHeight / cellSize);
+            
+            // Re-center grid if there's excess space
+            container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+            
+            const grid = [];
 
-            SOCIALS.forEach(social => {
-                const link = document.createElement('a');
-                link.href = social.url;
-                link.target = "_blank";
-                link.className = "social-btn group";
-                link.innerHTML = `<i class="${social.icon}"></i>`;
-                
-                // Add hover color dynamically
-                link.addEventListener('mouseenter', () => {
-                    link.style.color = social.color;
-                    link.style.borderColor = social.color; // Optional: adds a border on hover
-                });
-                link.addEventListener('mouseleave', () => {
-                    link.style.color = 'white';
-                    link.style.borderColor = 'transparent';
-                });
+            for (let r = 0; r < rows; r++) {
+                grid[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    const isMine = Math.random() < mineProbability;
+                    const cell = document.createElement('div');
+                    cell.className = 'mine-cell';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    
+                    const cellData = { isMine, revealed: false, flagged: false, element: cell };
+                    grid[r][c] = cellData;
 
-                container.appendChild(link);
-            });
+                    cell.addEventListener('click', () => reveal(r, c, grid));
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        flag(r, c, grid);
+                    });
+
+                    container.appendChild(cell);
+                }
+            }
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderSocials();
-            
-            // Simple entry animation
-            const panels = document.querySelectorAll('.glass-panel');
-            panels.forEach((panel, index) => {
-                panel.style.opacity = '0';
-                panel.style.transform = 'translateY(10px)';
-                setTimeout(() => {
-                    panel.style.transition = 'all 0.6s ease';
-                    panel.style.opacity = '1';
-                    panel.style.transform = 'translateY(0)';
-                }, 100 * (index + 1));
-            });
-        });
+        function countMines(r, c, grid) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    const nr = r + i;
+                    const nc = c + j;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc].isMine) {
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        function reveal(r, c, grid) {
+            const cell = grid[r][c];
+            if (cell.revealed || cell.flagged) return;
+
+            cell.revealed = true;
+            cell.element.classList.add('revealed');
+
+            if (cell.isMine) {
+                cell.element.classList.add('mine');
+                cell.element.innerHTML = '💣';
+                setTimeout(() => initGame(), 2000);
+            } else {
+                const mineCount = countMines(r, c, grid);
+                if (mineCount > 0) {
+                    cell.element.innerHTML = mineCount;
+                    // Colors adjusted for dark mode visibility
+                    cell.element.style.color = ['','#74b9ff','#55efc4','#ff7675','#a29bfe','#fdcb6e','#81ecec','#ffeaa7','#dfe6e9'][mineCount];
+                } else {
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            const nr = r + i;
+                            const nc = c + j;
+                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                                reveal(nr, nc, grid);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function flag(r, c, grid) {
+            const cell = grid[r][c];
+            if (cell.revealed) return;
+            cell.flagged = !cell.flagged;
+            cell.element.innerHTML = cell.flagged ? '🚩' : '';
+            cell.element.style.color = '#ff7675';
+        }
+
+        window.addEventListener('resize', initGame);
+        initGame();
     </script>
 </body>
 </html>
