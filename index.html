@@ -196,8 +196,8 @@
         /* Typography tweaks for dark mode */
         h3 { color: var(--purple-accent); }
 
-        /* Fix for Webring alignment (Homebrew, TVTime, Nyan) */
-        #homebrew-wrapper, #tvtimering, #NYAN_ {
+        /* Fix for Webring alignment */
+        .webring-container {
             display: flex !important;
             flex-direction: row !important;
             align-items: center !important;
@@ -207,7 +207,7 @@
         }
         
         /* Force internal divs to align horizontally */
-        #homebrew-wrapper div, #tvtimering div, #NYAN_ div {
+        .webring-container div {
             display: flex !important;
             flex-direction: row !important;
             align-items: center !important;
@@ -216,13 +216,13 @@
         }
 
         /* Ensure tables don't break layout */
-        #homebrew-wrapper table, #tvtimering table, #NYAN_ table {
+        .webring-container table {
             display: inline-table !important;
             margin: 0 !important;
         }
 
         /* Prevent images from being squished */
-        #homebrew-wrapper img, #tvtimering img, #NYAN_ img {
+        .webring-container img {
             flex-shrink: 0 !important;
             width: auto !important;
             height: auto !important;
@@ -425,16 +425,19 @@
         <div class="content-box">
             <span class="box-title">WEBRINGS</span>
             <div class="box-body" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;"> 
-                 <div id="tvtimering">
+                 <div id="tvtimering" class="webring-container">
                     <script type="text/javascript" src="https://thegreenroom.neocities.org/webrings/tvtimewebring/onionring-variables.js"></script>
                     <script type="text/javascript" src="https://thegreenroom.neocities.org/webrings/tvtimewebring/onionring-widget.js"></script>
                 </div>
-                <div id="homebrew-wrapper">
+                <div id="homebrew-wrapper" class="webring-container">
                     <script src="https://homebrew.cresentri.com/webring.js"></script>
                 </div>
-                <div id='NYAN_'>
+                <div id='NYAN_' class="webring-container">
                         <script type="text/javascript" src="https://epiccity.nekoweb.org/ring/onionring-variables.js"></script>
                     <script type="text/javascript" src="https://epiccity.nekoweb.org/ring/onionring-widget - small.js"></script>
+                </div>
+                <div class="webring-container">
+                    <script src="https://silly.possiblyaxolotl.com/ring/webstring.js"></script>
                 </div>
             </div>
         </div>
