@@ -15,7 +15,7 @@
             --text-main: #f1f5f9;
             --purple-accent: #a29bfe; /* Lighter purple for dark mode visibility */
             --yellow-accent: #facc15;
-            --indie-border: 4px solid #000000;
+            --indie-border: 1px solid #000;
         }
 
         body {
@@ -93,9 +93,10 @@
 
         .content-box {
             background: var(--panel-bg);
-            border: var(--indie-border);
+            border: ridge rgb(187, 106, 0) 6px;
             margin-bottom: 30px;
             position: relative;
+            box-shadow: 0 0 10px 12.5px rgba(0,0,0,0.3);
         }
 
         .box-title {
@@ -107,7 +108,7 @@
             display: inline-block;
             margin-top: -18px;
             margin-left: 15px;
-            border: var(--indie-border);
+            border: ridge rgb(0, 0, 0) 3px;
             font-weight: bold;
         }
 
@@ -196,37 +197,11 @@
         /* Typography tweaks for dark mode */
         h3 { color: var(--purple-accent); }
 
-        /* Fix for Webring alignment */
-        .webring-container {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: center !important;
-            justify-content: center !important;
-            flex-wrap: nowrap !important;
-            gap: 15px !important;
-        }
-        
-        /* Force internal divs to align horizontally */
-        .webring-container div {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 10px !important;
-        }
-
-        /* Ensure tables don't break layout */
-        .webring-container table {
-            display: inline-table !important;
-            margin: 0 !important;
-        }
-
-        /* Prevent images from being squished */
-        .webring-container img {
-            flex-shrink: 0 !important;
-            width: auto !important;
-            height: auto !important;
-            max-height: 80px !important;
+        .webring {
+            all: revert;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 20px;
         }
     </style>
 </head>
@@ -238,7 +213,7 @@
         --panel-dark: #2d3436;
         --purple-accent: #a29bfe;
         --yellow-accent: #facc15;
-        --indie-border: 4px solid #000000;
+        --indie-border: 1px solid #000;
     }
 
     .nav-wrapper {
@@ -424,19 +399,19 @@
 
         <div class="content-box">
             <span class="box-title">WEBRINGS</span>
-            <div class="box-body" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;"> 
-                 <div id="tvtimering" class="webring-container">
+            <div class="box-body" style="text-align: center;"> 
+                <div id="tvtimering" class="webring">
                     <script type="text/javascript" src="https://thegreenroom.neocities.org/webrings/tvtimewebring/onionring-variables.js"></script>
                     <script type="text/javascript" src="https://thegreenroom.neocities.org/webrings/tvtimewebring/onionring-widget.js"></script>
                 </div>
-                <div id="homebrew-wrapper" class="webring-container">
+                <div id="homebrew-wrapper" class="webring">
                     <script src="https://homebrew.cresentri.com/webring.js"></script>
                 </div>
-                <div id='NYAN_' class="webring-container">
+                <div id="NYAN_" class="webring">
                         <script type="text/javascript" src="https://epiccity.nekoweb.org/ring/onionring-variables.js"></script>
                     <script type="text/javascript" src="https://epiccity.nekoweb.org/ring/onionring-widget - small.js"></script>
                 </div>
-                <div class="webring-container">
+                <div class="webring">
                     <script src="https://silly.possiblyaxolotl.com/ring/webstring.js"></script>
                 </div>
             </div>
@@ -544,4 +519,3 @@
     </script>
 </body>
 </html>
-
