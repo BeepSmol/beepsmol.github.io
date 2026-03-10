@@ -25,56 +25,10 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-        }
-
-        /* --- Minesweeper Background Layer --- */
-        #minesweeper-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            display: grid;
-            opacity: 0.5;
-            pointer-events: auto;
-            /* Ensure cells are centered and sized properly */
-            justify-content: center;
-            align-content: start;
-        }
-
-        .mine-cell {
-            width: 40px;
-            height: 40px;
-            background: var(--purple-accent);
-            border-top: 3px solid rgba(255,255,255,0.4);
-            border-left: 3px solid rgba(255,255,255,0.4);
-            border-bottom: 3px solid rgba(0,0,0,0.4);
-            border-right: 3px solid rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: sans-serif;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: black;
-            cursor: pointer;
-            user-select: none;
-            box-sizing: border-box;
-        }
-
-        .mine-cell:hover { 
-            background: var(--yellow-accent); 
-        }
-
-        .mine-cell.revealed {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--purple-accent);
-            cursor: default;
-        }
-
-        .mine-cell.mine {
-            background: red;
+            border: ridge rgb(175, 148, 29) 20px;
+            background-image: url('placeholder.png');
+            background-repeat: repeat; /* This is the default, but ensures tiling */
+            background-size: 100px 100px; /* Adjust this to control the size of each grid square */
         }
 
         /* --- Main Layout --- */
@@ -93,10 +47,11 @@
 
         .content-box {
             background: var(--panel-bg);
-            border: ridge rgb(187, 106, 0) 6px;
+            border: ridge rgb(0, 0, 0) 6px;
             margin-bottom: 30px;
             position: relative;
             box-shadow: 0 0 10px 12.5px rgba(0,0,0,0.3);
+            background-image: linear-gradient(to bottom, #494636, #2d3436);
         }
 
         .box-title {
@@ -278,9 +233,6 @@
     </div>
 </div>
 
-    <!-- Background Game Layer -->
-    <div id="minesweeper-bg"></div>
-    
     <div class="site-container">
         <div class="marquee-box">
             <marquee scrollamount="6">BEEP BEEP IM A SHEEP | I LIKE MAKING STUFF | THE INDIE WEB IS MY HOME </marquee>
@@ -300,6 +252,7 @@
                         </div>
                         <h2 class="font-bold text-lg uppercase tracking-tighter text-yellow-400">BeepSmol</h2>
                         <p class="text-[11px] mb-4 text-gray-400 font-bold italic">Game Dev / Music Maker</p>
+                        
                         
                         <div class="flex justify-center mt-2">
                             <a href="https://www.youtube.com/@beepsmol?sub_confirmation=1" class="social-link"><i class="fab fa-youtube"></i></a>
@@ -341,6 +294,7 @@
                         <p class="mb-4 text-gray-300">
                             I like coding, making games, and producing music. This website is where I keep all my stuff and just hang out.
                         </p>
+                        <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fbeepsmol.com&label=Site+Visits&icon=dot&color=%23a98eda&message=&style=social&tz=UTC">
                     </div>
                 </div>
 
@@ -376,7 +330,7 @@
                         </div>
 
                         <div class="border-t-2 border-dashed border-gray-700 pt-6">
-                            <h4 class="font-sans text-2xl text-yellow-400 mb-4">NEIGHBOURS/FRIENDS/COOL SITES</h4>
+                            <h4 class="font-sans text-2xl text-yellow-400 mb-4">NEIGHBOURS/FRIENDS</h4>
                             <div class="flex flex-wrap justify-center gap-4 mb-6">
                                 <a href="https://kirbydogs.neocities.org/"><img src="https://kirbydogs.neocities.org/location-img/buttons/KDP%20and%20Inflect%20Now!.png" title="Visit KDP, today!" width="88"></a>
                                 <a href="https://winbows.neocities.org/" target="_top"><img src="https://winbows.neocities.org/resources/winbows-btn.png" title="Winbows XP" alt="Winbows XP"/></a>
@@ -422,101 +376,7 @@
         </footer>
     </div>
 
-    <script>
-        const container = document.getElementById('minesweeper-bg');
-        const cellSize = 40; // Fixed size for squares
-        const mineProbability = 0.12;
-        let rows, cols;
 
-        function initGame() {
-            container.innerHTML = '';
-            // Calculate how many fixed-size cells fit in the viewport
-            cols = Math.ceil(window.innerWidth / cellSize);
-            rows = Math.ceil(window.innerHeight / cellSize);
-            
-            // Re-center grid if there's excess space
-            container.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
-            
-            const grid = [];
 
-            for (let r = 0; r < rows; r++) {
-                grid[r] = [];
-                for (let c = 0; c < cols; c++) {
-                    const isMine = Math.random() < mineProbability;
-                    const cell = document.createElement('div');
-                    cell.className = 'mine-cell';
-                    cell.dataset.row = r;
-                    cell.dataset.col = c;
-                    
-                    const cellData = { isMine, revealed: false, flagged: false, element: cell };
-                    grid[r][c] = cellData;
-
-                    cell.addEventListener('click', () => reveal(r, c, grid));
-                    cell.addEventListener('contextmenu', (e) => {
-                        e.preventDefault();
-                        flag(r, c, grid);
-                    });
-
-                    container.appendChild(cell);
-                }
-            }
-        }
-
-        function countMines(r, c, grid) {
-            let count = 0;
-            for (let i = -1; i <= 1; i++) {
-                for (let j = -1; j <= 1; j++) {
-                    const nr = r + i;
-                    const nc = c + j;
-                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc].isMine) {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
-
-        function reveal(r, c, grid) {
-            const cell = grid[r][c];
-            if (cell.revealed || cell.flagged) return;
-
-            cell.revealed = true;
-            cell.element.classList.add('revealed');
-
-            if (cell.isMine) {
-                cell.element.classList.add('mine');
-                cell.element.innerHTML = '💣';
-                setTimeout(() => initGame(), 2000);
-            } else {
-                const mineCount = countMines(r, c, grid);
-                if (mineCount > 0) {
-                    cell.element.innerHTML = mineCount;
-                    cell.element.style.color = ['','#60a5fa','#4ade80','#f87171','#c084fc','#fbbf24','#22d3ee','#e879f9','#9ca3af'][mineCount];
-                } else {
-                    for (let i = -1; i <= 1; i++) {
-                        for (let j = -1; j <= 1; j++) {
-                            const nr = r + i;
-                            const nc = c + j;
-                            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-                                reveal(nr, nc, grid);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        function flag(r, c, grid) {
-            const cell = grid[r][c];
-            if (cell.revealed) return;
-            cell.flagged = !cell.flagged;
-            cell.element.innerHTML = cell.flagged ? '🚩' : '';
-            cell.element.style.color = '#ff7675';
-        }
-
-        window.addEventListener('resize', initGame);
-        initGame();
-    </script>
 </body>
 </html>
-
