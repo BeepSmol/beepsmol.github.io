@@ -20,3 +20,6 @@ i wont say anything.
 i will only give hints when needed.
 bye!
 have a good day!
+remember.
+you are loved.
+dont let anyone else make you think otherwise.
