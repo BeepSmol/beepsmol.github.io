@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeepSmol | Pixel Art</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1a1a2e;
+            --panel-bg: #2d3436;
+            --text-main: #f1f5f9;
+            --purple-accent: #a29bfe;
+            --yellow-accent: #facc15;
+            --indie-border: 1px solid #000;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            border: ridge rgb(175, 148, 29) 20px;
+            background-image: url('placeholder.png');
+            background-repeat: repeat;
+            background-size: 100px 100px;
+        }
+
+        /* --- Main Layout --- */
+        .site-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-box {
+            background: var(--panel-bg);
+            border: ridge rgb(0, 0, 0) 6px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 0 10px 12.5px rgba(0,0,0,0.3);
+            background-image: linear-gradient(to bottom, #494636, #2d3436);
+        }
+
+        .box-title {
+            background: var(--purple-accent);
+            color: #1a1a2e;
+            padding: 2px 15px;
+            font-family: sans-serif;
+            font-size: 1.5rem;
+            display: inline-block;
+            margin-top: -18px;
+            margin-left: 15px;
+            border: ridge rgb(0, 0, 0) 3px;
+            font-weight: bold;
+        }
+
+        .box-body { padding: 25px; }
+
+        /* --- Gallery Grid --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .art-card {
+            background: #000;
+            border: 3px solid #000;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        .art-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--purple-accent);
+        }
+
+        .art-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            image-rendering: pixelated;
+        }
+
+        /* --- Modal --- */
+        #art-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--panel-bg);
+            border: ridge rgb(175, 148, 29) 6px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            image-rendering: pixelated;
+            border: 4px solid #000;
+            background: #000;
+            margin-bottom: 15px;
+        }
+
+        .watch-link {
+            display: inline-block;
+            background: var(--yellow-accent);
+            color: #000;
+            font-weight: bold;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            text-transform: uppercase;
+            transition: all 0.1s;
+        }
+
+        .watch-link:hover {
+            background: white;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: -10px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .nav-wrapper { background: var(--bg-dark); border-bottom: var(--indie-border); padding: 15px 10px; position: sticky; top: 0; z-index: 1000; text-align: center; }
+        .nav-title { font-family: sans-serif; font-size: 2.8rem; color: var(--yellow-accent); text-shadow: 3px 3px 0px #000; margin-bottom: 12px; display: block; text-decoration: none; }
+        .nav-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .nav-links a { background: var(--purple-accent); color: #1a1a2e; border: 2px solid #000; padding: 6px 16px; text-decoration: none; font-weight: bold; font-size: 1.2rem; box-shadow: 3px 3px 0px #000; transition: all 0.1s; text-transform: uppercase; }
+        .nav-links a:hover { background: var(--yellow-accent); transform: translate(-2px, -2px); box-shadow: 5px 5px 0px #000; }
+    </style>
+</head>
+<body>
+
+<div class="nav-wrapper">
+    <a href="index.html" class="nav-title">BEEPSMOL.COM</a>
+    <div class="nav-links">
+        <a href="https://beepsmol.com">Home</a>
+        <a href="https://beepsmol.com/projects">Projects</a>
+        <a href="https://beepsmol.com/music">Music</a>
+        <a href="https://beepsmol.com/blog">Blog</a>
+    </div>
+</div>
+
+<div class="site-container">
+    <div class="content-box">
+        <span class="box-title">PIXEL_GALLERY</span>
+        <div class="box-body">
+            <p class="mb-8 text-gray-300 italic">Click an image to see it full-size and watch the creation process.</p>
+            
+            <div id="gallery-grid" class="gallery-grid">
+                <!-- Art injected here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="art-modal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <img id="modal-img" class="modal-image" src="" alt="Expanded Art">
+        <h2 id="modal-title" class="text-2xl font-bold text-yellow-400 mb-4 uppercase">Title</h2>
+        <a id="modal-video" href="#" target="_blank" class="watch-link">
+            <i class="fab fa-youtube mr-2"></i> Watch Here
+        </a>
+    </div>
+</div>
+
+<script>
+    // --- EDIT YOUR ART HERE ---
+    // Add new items to the top of the list to keep them "Latest"
+    const pixelArt = [
+        {
+            title: "PLACEHOLDER",
+            image: "placeholder.png",
+            video: "https://beepsmol.com/youtube",
+            date: "2026-03-30"
+        }
+    ];
+
+    function renderGallery() {
+        const grid = document.getElementById('gallery-grid');
+        // Sort by date (Latest to Oldest)
+        const sortedArt = [...pixelArt].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        grid.innerHTML = sortedArt.map((art, index) => `
+            <div class="art-card" onclick="openModal(${index})">
+                <img src="${art.image}" alt="${art.title}" onerror="this.src='https://via.placeholder.com/300/000/a29bfe?text=PIXEL+ART'">
+            </div>
+        `).join('');
+    }
+
+    function openModal(index) {
+        const art = pixelArt[index];
+        document.getElementById('modal-img').src = art.image;
+        document.getElementById('modal-title').innerText = art.title;
+        document.getElementById('modal-video').href = art.video;
+        document.getElementById('art-modal').style.display = 'flex';
+    }
+
+    function closeModal(e) {
+        document.getElementById('art-modal').style.display = 'none';
+    }
+
+    window.onload = () => {
+        renderGallery();
+    };
+</script>
+</body>
+</html>
