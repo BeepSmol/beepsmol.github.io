@@ -297,9 +297,13 @@
                 <div class="content-box">
                     <span class="box-title">STATUS</span>
                     <div class="box-body">
-                        <div class="bg-black/40 border-2 border-purple-500 p-4 flex items-center">
-                            <div class="status-dot animate-pulse"></div>
-                            <span class="font-bold text-sm uppercase text-gray-100">Currently: Youtubing</span>
+                        <div class="bg-black/40 border-2 border-purple-500 p-4">
+                            <div id="status-text" class="flex flex-col gap-2 font-bold text-sm uppercase text-gray-100">
+                                <div class="flex items-center gap-2">
+                                    <div class="status-dot animate-pulse"></div>
+                                    <span>Loading live status...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -389,6 +393,85 @@
     </div>
 
 
+    <script>
+        const USER_ID = '1222130339124740097';
+        const statusTextContainer = document.getElementById('status-text');
+        let socket = null;
+        let heartbeatInterval = null;
 
+        function updateUI(user) {
+            const statusColors = {
+                online: '#22c55e',
+                idle: '#facc15',
+                dnd: '#ef4444',
+                offline: '#71717a'
+            };
+            
+            let activeThings = [];
+
+            // 1. Music (Spotify)
+            if (user.listening_to_spotify && user.spotify) {
+                activeThings.push({
+                    text: `🎵 Listening to: ${user.spotify.song} - ${user.spotify.artist}`,
+                    color: '#1DB954'
+                });
+            }
+
+            // 2. Games
+            const games = user.activities.filter(a => a.type === 0);
+            games.forEach(g => activeThings.push({
+                text: `🎮 Playing: ${g.name}`,
+                color: '#a29bfe'
+            }));
+            
+            // 3. Custom status
+            const custom = user.activities.find(a => a.type === 4);
+            if (custom && custom.state) activeThings.push({
+                text: `✨ ${custom.state}`,
+                color: '#facc15'
+            });
+            
+            statusTextContainer.innerHTML = '';
+
+            const createItem = (msg, color) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-2';
+                row.innerHTML = `<div class="status-dot animate-pulse" style="background-color: ${color}"></div><span>${msg}</span>`;
+                return row;
+            };
+
+            if (activeThings.length > 0) {
+                activeThings.forEach(thing => statusTextContainer.appendChild(createItem(thing.text, thing.color)));
+            } else {
+                const color = statusColors[user.discord_status] || statusColors.offline;
+                const msg = user.discord_status === 'offline' ? 'Currently: Offline' : `Currently: ${user.discord_status.toUpperCase()}`;
+                statusTextContainer.appendChild(createItem(msg, color));
+            }
+        }
+
+        function connectWebSocket() {
+            socket = new WebSocket('wss://api.lanyard.rest/socket');
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.op === 1) { // Hello Opcode
+                    heartbeatInterval = setInterval(() => socket.send(JSON.stringify({ op: 3 })), data.d.heartbeat_interval);
+                    socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: USER_ID } }));
+                }
+
+                if (data.t === 'INIT_STATE' || data.t === 'PRESENCE_UPDATE') {
+                    updateUI(data.d);
+                }
+            };
+
+            socket.onclose = () => {
+                clearInterval(heartbeatInterval);
+                setTimeout(connectWebSocket, 5000); // Reconnect after 5s if dropped
+            };
+        }
+
+        connectWebSocket();
+    </script>
 </body>
 </html>
