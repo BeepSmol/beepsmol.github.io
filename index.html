@@ -9,7 +9,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://thegreenroom.neocities.org/webrings/tvtimewebring/onionring.css"/>
     <link rel="stylesheet" href="https://epiccity.nekoweb.org/ring//onionring - small.css">
-    <script async src="https://sleepie.uk/oneko.js"></script>
     <style>
         :root {
             --bg-dark: #1a1a2e; /* Deep dark purple/blue */
@@ -403,6 +402,10 @@
         let socket = null;
         let heartbeatInterval = null;
 
+        const NON_DISCORD_STATUSES = [
+            "Working on new music"
+        ];
+
         function updateUI(user) {
             const statusColors = {
                 online: '#22c55e',
@@ -451,6 +454,31 @@
                 const msg = user.discord_status === 'offline' ? 'Currently: Offline' : `Currently: ${user.discord_status.toUpperCase()}`;
                 statusTextContainer.appendChild(createItem(msg, color));
             }
+            
+            // Add a divider line between Discord activities and manual statuses
+            if (NON_DISCORD_STATUSES.length > 0) {
+                const divider = document.createElement('div'); // Create a container for the divider and text
+                divider.className = 'relative flex justify-center items-center my-2'; // Use flexbox for centering
+                divider.innerHTML = '<div class="absolute w-full border-t-2 border-dashed border-gray-700"></div>' +
+                                    '<span class="relative bg-black/40 px-2 text-xs text-gray-400 uppercase font-bold">non-live status:</span>';
+                statusTextContainer.appendChild(divider);
+            }
+
+            // Append Non-Discord Statuses to the same container
+            NON_DISCORD_STATUSES.forEach(text => {
+                let displayText = text;
+                let dotColor = '#22c55e'; // Default to green for active
+
+                if (text.toLowerCase().includes('offline')) {
+                    dotColor = '#71717a'; // Gray for offline
+                    if (user.discord_status === 'offline') {
+                        displayText = text.replace(/offline/i, 'tracking offline');
+                    }
+                }
+
+                const extraItem = createItem(displayText, dotColor);
+                statusTextContainer.appendChild(extraItem);
+            });
         }
 
         function connectWebSocket() {
