@@ -214,12 +214,14 @@
         }
     ];
 
+    let displayedPixelArt = []; // Declare a global variable to hold the sorted/displayed art
+
     function renderGallery() {
         const grid = document.getElementById('gallery-grid');
         // Sort by date (Latest to Oldest)
-        const sortedArt = [...pixelArt].sort((a, b) => new Date(b.date) - new Date(a.date));
+        displayedPixelArt = [...pixelArt].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        grid.innerHTML = sortedArt.map((art, index) => `
+        grid.innerHTML = displayedPixelArt.map((art, index) => `
             <div class="art-card" onclick="openModal(${index})">
                 <img src="${art.image}" alt="${art.title}" onerror="this.src='https://via.placeholder.com/300/000/a29bfe?text=PIXEL+ART'">
             </div>
@@ -227,7 +229,7 @@
     }
 
     function openModal(index) {
-        const art = pixelArt[index];
+        const art = displayedPixelArt[index]; // Use the globally accessible displayedPixelArt
         document.getElementById('modal-img').src = art.image;
         document.getElementById('modal-title').innerText = art.title;
         document.getElementById('modal-video').href = art.video;
