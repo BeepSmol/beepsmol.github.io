@@ -276,8 +276,8 @@
 
     function renderGallery() {
         const grid = document.getElementById('gallery-grid');
-        // Sort by date (Latest to Oldest)
-        displayedPixelArt = [...pixelArt].sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Reverse the original list order (bottom of the code list appears first)
+        displayedPixelArt = [...pixelArt].reverse();
 
         grid.innerHTML = displayedPixelArt.map((art, index) => `
             <div class="art-card" onclick="openModal(${index})">
