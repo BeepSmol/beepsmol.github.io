@@ -149,6 +149,8 @@
             display: block;
             width: 100%;
             height: auto !important;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
 
         .watch-link {
@@ -495,6 +497,7 @@
     function renderPBNCanvas() {
         const canvas = document.getElementById('pbn-canvas');
         const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
         const h = pbnData.grid.length;
         const w = pbnData.grid[0].length;
         const cellSize = pbnData.cellSize;
