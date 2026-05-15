@@ -392,6 +392,8 @@
         zoomLevel: 1 
     };
 
+    let not10 = false; // Change to true for 50x50 grid
+
     function generatePBN(src) {
         return new Promise((resolve, reject) => {
             const canvas = document.getElementById('pbn-canvas');
@@ -405,9 +407,10 @@
                     pbnData.zoomLevel = 1;
                     canvas.style.width = '100%';
 
-                    // Force the PBN to be exactly 50x50
-                    const w = 50;
-                    const h = 50;
+                    // Force the PBN grid size (10x10 default, 50x50 if not10 is true)
+                    const gridSize = (typeof not10 !== 'undefined' && not10 === true) ? 50 : 10;
+                    const w = gridSize;
+                    const h = gridSize;
                     const offCanvas = document.createElement('canvas');
                     const offCtx = offCanvas.getContext('2d');
                     offCtx.imageSmoothingEnabled = false; // Keep pixels sharp for color extraction
