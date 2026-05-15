@@ -363,45 +363,47 @@
                             <h4 class="font-sans text-2xl text-yellow-400 mb-4">OTHERS</h4>
                             <div class="flex flex-wrap justify-center gap-4">
                                 <a href='http://internetometer.com/give/51679'><img src='http://internetometer.com/imagesmall/51679.png'/></a>
-                                <!-- MINI API SUB COUNTER -->
-                                    <div id="api-sub-counter" style="
-                                        display: inline-flex;
-                                        align-items: center;
-                                        gap: 10px;
-                                        padding: 8px 15px;
-                                        background: #111;
-                                        border: 1px solid #333;
-                                        border-radius: 4px;
-                                        color: #ff0000;
-                                        font-family: sans-serif;
-                                        font-weight: bold;
-                                        width: fit-content;
-                                    ">
-                                        <span style="font-size: 12px; color: #aaa;">SUBSCRIBERS:</span>
-                                        <span id="sub-count-display">...</span>
+                               <!-- MINI API SUB COUNTER WITH REDIRECT -->
+                                    <a href="https://beepsmol.com/youtube" target="_blank" style="text-decoration: none; cursor: pointer;">
+                                        <div id="api-sub-counter" style="
+                                            display: inline-flex;
+                                            align-items: center;
+                                            gap: 10px;
+                                            padding: 8px 15px;
+                                            background: #111;
+                                            border: 1px solid #333;
+                                            border-radius: 4px;
+                                            color: #ff0000;
+                                            font-family: sans-serif;
+                                            font-weight: bold;
+                                            width: fit-content;
+                                        ">
+                                            <span style="font-size: 12px; color: #aaa;">SUBSCRIBERS:</span>
+                                            <span id="sub-count-display">...</span>
+                                            
+                                            <script>
+                                                (function() {
+                                                    const API_KEY = 'AIzaSyBYr3d8FbnMwhUA_QYi1fw16Rq2ANNMFD8';
+                                                    const CHANNEL_ID = 'UCvqwHR6iSA653e12bsh9avg';
+                                                    const display = document.getElementById('sub-count-display');
                                         
-                                        <script>
-                                            (function() {
-                                                const API_KEY = 'AIzaSyBYr3d8FbnMwhUA_QYi1fw16Rq2ANNMFD8';
-                                                const CHANNEL_ID = 'UCvqwHR6iSA653e12bsh9avg';
-                                                const display = document.getElementById('sub-count-display');
-                                    
-                                                async function updateCount() {
-                                                    try {
-                                                        const r = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`);
-                                                        const d = await r.json();
-                                                        const num = d.items[0].statistics.subscriberCount;
-                                                        display.innerText = Number(num).toLocaleString();
-                                                    } catch (e) {
-                                                        display.innerText = "OFFLINE";
+                                                    async function updateCount() {
+                                                        try {
+                                                            const r = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${API_KEY}`);
+                                                            const d = await r.json();
+                                                            const num = d.items[0].statistics.subscriberCount;
+                                                            display.innerText = Number(num).toLocaleString();
+                                                        } catch (e) {
+                                                            display.innerText = "OFFLINE";
+                                                        }
                                                     }
-                                                }
-                                    
-                                                updateCount();
-                                                setInterval(updateCount, 300000); // Updates every 5 mins to save API quota
-                                            })();
-                                        </script>
-                                    </div>
+                                        
+                                                    updateCount();
+                                                    setInterval(updateCount, 300000); // Updates every 5 mins to save API quota
+                                                })();
+                                            </script>
+                                        </div>
+                                    </a>
                         </div>
                     </div>
                 </div>
