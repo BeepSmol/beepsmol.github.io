@@ -4,17 +4,17 @@
     <link rel="icon" type="image/x-icon" href="icon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeepSmol | Welcome!</title> 
+    <title>BeepSmol</title> 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://thegreenroom.neocities.org/webrings/tvtimewebring/onionring.css"/>
     <link rel="stylesheet" href="https://epiccity.nekoweb.org/ring//onionring - small.css">
     <style>
         :root {
-            --bg-dark: #1a1a2e; /* Deep dark purple/blue */
-            --panel-bg: #2d3436; /* Dark grey panels */
+            --bg-dark: #1a1a2e;
+            --panel-bg: #2d3436;
             --text-main: #f1f5f9;
-            --purple-accent: #a29bfe; /* Lighter purple for dark mode visibility */
+            --purple-accent: #a29bfe;
             --yellow-accent: #facc15;
             --indie-border: 1px solid #000;
         }
@@ -28,11 +28,10 @@
             overflow-x: hidden;
             border: ridge rgb(175, 148, 29) 20px;
             background-image: url('placeholder.png');
-            background-repeat: repeat; /* This is the default, but ensures tiling */
-            background-size: 100px 100px; /* Adjust this to control the size of each grid square */
+            background-repeat: repeat;
+            background-size: 100px 100px;
         }
 
-        /* --- Main Layout --- */
         .site-container {
             max-width: 900px;
             margin: 60px auto;
@@ -52,7 +51,7 @@
 
         .box-title {
             background: var(--purple-accent);
-            color: #1a1a2e; /* Dark text for contrast on light purple */
+            color: #1a1a2e;
             padding: 2px 15px;
             font-family: sans-serif;
             font-size: 1.5rem;
@@ -130,6 +129,8 @@
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
+            font-weight: bold;
+            font-size: 1.2rem;
         }
 
         .status-dot {
@@ -145,7 +146,6 @@
         a { color: var(--yellow-accent); transition: 0.2s; }
         a:hover { color: var(--purple-accent); }
 
-        /* Typography tweaks for dark mode */
         h3 { color: var(--purple-accent); }
 
         .webring {
@@ -238,7 +238,7 @@
         </div>
 
         <div class="sidebar-layout">
-            <!-- Sidebar -->
+            <!-- sideber area -->
             <aside>
                 <div class="content-box">
                     <span class="box-title">ME!</span>
@@ -268,7 +268,7 @@
                             <li><a href="https://beepsmol.com/projects">Some Projects</a></li>
                             <li><a href="https://beepsmol.com/youtube">Youtube</a></li>
                             <li><a href="https://www.yourworldoftext.com/~BeepSmol/">My World Of Text</a></li>
-                                <!--make the links pop out more so ppl click em-->
+                                <!-- remember to make the links pop out more so ppl click em-->
                         </ul>
                     </div>
                 </div>
@@ -281,18 +281,17 @@
                 </div>
             </aside>
 
-            <!-- Main -->
+            <!-- Not sidebar ?? -->
             <main>
                 <div class="content-box">
                     <span class="box-title">ABOUT ME</span>
                     <div class="box-body">
                         <h3 class="text-3xl font-bold mb-4">Hi, I'm BeepSmol!</h3>
                         <p class="mb-4 leading-relaxed text-gray-200">
-                            Welcome to my corner of the internet. I'm a Game developer, 
-                            Music producer, and YouTuber.
+                            Welcome to my website! I'm a Youtuber, Music producer, and Gamedev!
                         </p>
                         <p class="mb-4 text-gray-300">
-                            I like coding, making games, and producing music. This website is where I keep all my stuff and just hang out.
+                            If you haven't, you should subscribe to me :D
                         </p>
                         <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Fbeepsmol.com&label=Site+Visits&icon=dot&color=%23a98eda&message=&style=for-the-badge&tz=UTC">
                     </div>
@@ -333,7 +332,7 @@
                 <div class="content-box">
                     <span class="box-title">BUTTONS</span>
                     <div class="box-body text-center">
-                        <p class="mb-4 text-gray-300">It would be highly appreciated if you could link to my site if you like my work!</p>
+                        <p class="mb-4 text-gray-300">I would love it if you could add my button to your website!</p>
                         
                         <div class="flex flex-col items-center gap-4 mb-8">
                             <a href="https://beepsmol.com" target="_top"><img src="https://beepsmol.com/beepyicon.png" title="Beep's Website" alt="Beep's Website"/></a>
@@ -367,7 +366,6 @@
                             <h4 class="font-sans text-2xl text-yellow-400 mb-4">OTHERS</h4>
                             <div class="flex flex-wrap justify-center gap-4">
                                 <a href='http://internetometer.com/give/51679'><img src='http://internetometer.com/imagesmall/51679.png'/></a>
-                               <!-- MINI API SUB COUNTER WITH REDIRECT -->
                                     <a href="https://beepsmol.com/youtube" target="_blank" style="text-decoration: none; cursor: pointer;">
                                         <div id="api-sub-counter" style="
                                             display: inline-flex;
@@ -403,7 +401,7 @@
                                                     }
                                         
                                                     updateCount();
-                                                    setInterval(updateCount, 300000); // Updates every 5 mins to save API quota
+                                                    setInterval(updateCount, 300000);
                                                 })();
                                             </script>
                                         </div>
@@ -429,20 +427,21 @@
             </main>
         </div>
 
+        <footer>
             <p>BEEPSMOL&trade; &copy; 2026. All rights reserved.</p>
-    </footer>
+        </footer>
 
-    <!-- Mobile Incompatibility Modal -->
+    <!-- Mobile Incompatibility Popup -->
     <div id="mobile-incompatible-modal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999] hidden p-4">
         <div class="content-box max-w-md w-full" style="margin-bottom: 0;">
             <span class="box-title">WARNING</span>
             <div class="box-body text-center">
                 <h2 class="text-2xl font-bold mb-4 uppercase tracking-tighter" style="color: var(--yellow-accent)">Incompatible Device</h2>
                 <p class="mb-6 leading-relaxed" style="color: var(--text-main)">
-                    This website is designed for desktop environments and is currently incompatible with mobile phones. 
-                    The layout may break or features may not work as intended.
-
-                    tl;dr: if you're on mobile, the site will look really bad and some things won't work. Sorry about that!
+                    This website is designed for desktops/laptops and is currently unable to be used on mobile phones. 
+                    The site will break and features will not work as needed.<br>
+                    <br>
+                    tl;dr: If you're on mobile, the site will look really bad and some things won't work. Sorry about that!
                 </p>
                 
                 <div class="pt-4 border-t-2 border-dashed border-gray-700">
@@ -456,11 +455,6 @@
     </div>
 
 
-
-        </footer>
-    </div>
-
-
     <script>
         const USER_ID = '1222130339124740097';
         const statusTextContainer = document.getElementById('status-text');
@@ -468,9 +462,9 @@
         let heartbeatInterval = null;
 
         const NON_DISCORD_STATUSES = [
-            "pixeling my art",
-            "creating music",
-            "youtuber stuff"
+            "making pixelart",
+            "producing music",
+            "making youtube videos"
         ];
 
         function updateUI(user) {
@@ -483,7 +477,7 @@
             
             let activeThings = [];
 
-            // 1. Music (Spotify)
+            // Music
             if (user.listening_to_spotify && user.spotify) {
                 activeThings.push({
                     text: `🎵 Listening to: ${user.spotify.song} - ${user.spotify.artist}`,
@@ -491,14 +485,14 @@
                 });
             }
 
-            // 2. Games
+            // Games
             const games = user.activities.filter(a => a.type === 0);
             games.forEach(g => activeThings.push({
                 text: `🎮 Playing: ${g.name}`,
                 color: '#a29bfe'
             }));
             
-            // 3. Custom status
+            // Status
             const custom = user.activities.find(a => a.type === 4);
             if (custom && custom.state) activeThings.push({
                 text: `✨ ${custom.state}`,
@@ -522,22 +516,22 @@
                 statusTextContainer.appendChild(createItem(msg, color));
             }
             
-            // Add a divider line between Discord activities and manual statuses
+            
             if (NON_DISCORD_STATUSES.length > 0) {
-                const divider = document.createElement('div'); // Create a container for the divider and text
-                divider.className = 'relative flex justify-center items-center my-2'; // Use flexbox for centering
+                const divider = document.createElement('div'); 
+                divider.className = 'relative flex justify-center items-center my-2';
                 divider.innerHTML = '<div class="absolute w-full border-t-2 border-dashed border-gray-700"></div>' +
                                     '<span class="relative bg-black/40 px-2 text-xs text-gray-400 uppercase font-bold">non-live status:</span>';
                 statusTextContainer.appendChild(divider);
             }
 
-            // Append Non-Discord Statuses to the same container
+
             NON_DISCORD_STATUSES.forEach(text => {
                 let displayText = text;
-                let dotColor = '#22c55e'; // Default to green for active
+                let dotColor = '#22c55e';
 
                 if (text.toLowerCase().includes('offline')) {
-                    dotColor = '#71717a'; // Gray for offline
+                    dotColor = '#71717a';
                     if (user.discord_status === 'offline') {
                         displayText = text.replace(/offline/i, 'tracking offline');
                     }
@@ -548,7 +542,6 @@
             });
         }
 
-        // Mobile Incompatibility Logic
         function isMobileDevice() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             return /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|rim)|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|er)|ai(ko|er)|al(av|ca|co)|amoi|an(go|nt)|arch|avis|az(er|me|ri)|bl(ac|k|oo)|br(e|v)w|bumb|bw(at|ng)|c55|capi|ccwa|cdm|cell|chtm|cldc|cmd|co(mp|nd)|craw|da(is|jp|me)|dc-s|dica|dmob|do(c|ob)o|ds(ad|ar)|ec(ko|mc)|ef(ca|us)|eg(ym|eu)|ei(on|ne)|ez(io|np)|fl(ab|cd)|fennec|hiptop|ht(c_|ok)|htc-|hu(aw|op)|i-de|id(09|ja|vl)|inno|ipaq|iris|ki(it|tk)|ko(pf|sh)|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|cd|un)|mdd|me(ri|on)|mi(o8|oa|oo)|mmg1|mn(ca|co)|mo(bi|wt)|mx(ad|at|ez)|ne(cr|on)|nida|onf(x|ry)|op(t|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|20|40|60|ed)|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|ez)|ps(as|rj|xi)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm)|sanyo|sch(01|er)|scoo|sdk|se(ca|kr|oo)|sec(c|p)|sm(b|ar)|sh(er|mo)|si(em|on)|sk-00|smar|sq(h5|te)|sr(on|tr)|sl(am|av)|te(mp|me)|tk(ai|ad)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(sh|sh)|ts(ad|so)|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|70|80)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c |webc|whit|wi(g |nc|nd)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(userAgent.substr(0,4));
@@ -570,7 +563,7 @@
             }
         }
 
-        // Expose for console testing: triggerMobileWarning()
+        // testing command: triggerMobileWarning()
         window.triggerMobileWarning = showMobileIncompatiblePopup;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -590,7 +583,7 @@
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
 
-                if (data.op === 1) { // Hello Opcode
+                if (data.op === 1) {
                     heartbeatInterval = setInterval(() => socket.send(JSON.stringify({ op: 3 })), data.d.heartbeat_interval);
                     socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: USER_ID } }));
                 }
@@ -602,7 +595,7 @@
 
             socket.onclose = () => {
                 clearInterval(heartbeatInterval);
-                setTimeout(connectWebSocket, 5000); // Reconnect after 5s if dropped
+                setTimeout(connectWebSocket, 5000);
             };
         }
 
