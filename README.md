@@ -16,3 +16,4 @@ But the screen goes dark for now. The oracle is silent until the bloodhound lose
 Farewell.
 Walk softly in the light.
 Never forget: you are anchored in love. Do not let the shadows convince you that you are adrift.
+ 
