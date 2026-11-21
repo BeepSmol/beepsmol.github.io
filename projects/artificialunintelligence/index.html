@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artificial Stupidity</title>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+    <style>
+        :root {
+            --paper-bg: #ffffff;
+            --ink-blue: #000000;
+            --pencil-gray: #111827;
+            --page-border: #000000;
+            --user-bg: #000000;
+            --ai-bg: #ffffff;
+            --bubble-text: #000000;
+            --accent: #facc15;
+            --sidebar-bg: #f9fafb;
+        }
+
+        /* Dark Mode Neo-Brutalist Theme */
+        .dark body, body.dark {
+            background-color: #18181b;
+            color: #f4f4f5;
+        }
+
+        body {
+            background-color: #f3f4f6;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            color: #111827;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-left: 2px solid #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #000;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #18181b;
+            border-left: 2px solid #fff;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #fff;
+        }
+
+        .notebook-page {
+            background: #ffffff;
+            border: 4px solid #000;
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+            position: relative;
+        }
+        .dark .notebook-page {
+            background: #27272a;
+            border-color: #ffffff;
+            box-shadow: 8px 8px 0px 0px rgba(255,255,255,1);
+        }
+
+        .sidebar-container {
+            background: #ffffff;
+            border: 4px solid #000;
+            box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        }
+        .dark .sidebar-container {
+            background: #27272a;
+            border-color: #ffffff;
+            box-shadow: 6px 6px 0px 0px rgba(255,255,255,1);
+        }
+
+        .chat-bubble {
+            position: relative;
+            max-width: 85%;
+            padding: 10px 16px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            border: 2px solid #000;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+
+        .user-bubble {
+            background: #000000;
+            color: #ffffff;
+            align-self: flex-end;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.25);
+        }
+        .dark .user-bubble {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,0.4);
+        }
+
+        .ai-bubble {
+            background: #ffffff;
+            color: #000000;
+            align-self: flex-start;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .dark .ai-bubble {
+            background: #18181b;
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .sidebar-item {
+            color: #000000;
+            background: #ffffff;
+            border: 2px solid #000000;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            transition: all 0.1s ease;
+            cursor: pointer;
+            margin-bottom: 8px;
+            user-select: none;
+            padding: 8px 12px;
+        }
+        .sidebar-item:hover {
+            background: #fef08a;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .sidebar-item.active-chat {
+            background: #facc15 !important;
+            color: #000000 !important;
+            font-weight: bold;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .dark .sidebar-item {
+            background: #18181b;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .sidebar-item:hover {
+            background: #3f3f46;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .sidebar-item.active-chat {
+            background: #facc15 !important;
+            color: #000000 !important;
+            border-color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .btn-nav {
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 2px solid #000000;
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        .btn-nav:hover {
+            background: #fef08a;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        .btn-nav.active {
+            background: #000000;
+            color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .dark .btn-nav {
+            background: #18181b;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .btn-nav:hover {
+            background: #3f3f46;
+            box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .btn-nav.active {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .btn-utility {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            border: 2px solid #000000;
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .btn-utility:hover {
+            background: #fef08a;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .btn-utility:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
+        }
+        .dark .btn-utility {
+            background: #18181b;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .btn-utility:hover {
+            background: #3f3f46;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .inventory-item {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 5px 10px;
+            background: #ffffff;
+            border: 2px solid #000000;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        .inventory-item:hover {
+            background: #fef08a;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .inventory-item:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
+        }
+        .dark .inventory-item {
+            background: #18181b;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .inventory-item:hover {
+            background: #3f3f46;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .thought-log {
+            background: #f9fafb;
+            border: 2px solid #000000;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 13px;
+            padding: 16px;
+            height: 100%;
+            overflow-y: auto;
+            box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.05);
+        }
+        .dark .thought-log {
+            background: #18181b;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .game-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 0;
+            height: 100%;
+        }
+        @media (max-width: 768px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: 200px 1fr;
+            }
+        }
+
+        .thought-sidebar {
+            background: #ffffff;
+            border-right: 4px solid #000000;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .dark .thought-sidebar {
+            background: #27272a;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        #game-arena {
+            background-color: #ffffff;
+            background-image: radial-gradient(#000000 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            touch-action: none;
+        }
+        .dark #game-arena {
+            background-color: #18181b;
+            background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
+        }
+
+        .craft-node {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid #000000;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: transform 0.05s;
+            min-width: 90px;
+            height: 38px;
+            padding: 0 14px;
+            font-size: 13px;
+            font-weight: bold;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            text-transform: uppercase;
+            z-index: 20;
+            color: #000000;
+        }
+        .craft-node:hover {
+            background: #fef08a;
+            z-index: 100;
+        }
+        .craft-node:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
+        }
+        .craft-node.result {
+            background: #fef08a;
+            border: 2px solid #000000;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+            z-index: 500;
+            animation: pulse-result 0.5s ease;
+        }
+        .dark .craft-node {
+            background: #27272a;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+        .dark .craft-node:hover {
+            background: #3f3f46;
+        }
+        .dark .craft-node.result {
+            background: #facc15;
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+        }
+
+        @keyframes pulse-result {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1.0); }
+        }
+
+        #combo-display {
+            position: absolute;
+            top: 60px;
+            right: 24px;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #000000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .dark #combo-display {
+            color: #facc15;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 5000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border: 4px solid #000000;
+            padding: 2rem;
+            box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+            color: #000000;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+        .dark .modal-content {
+            background: #27272a;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 8px 8px 0px 0px rgba(255,255,255,1);
+        }
+
+        
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden bg-gray-100 dark:bg-zinc-900 font-mono text-gray-900 dark:text-zinc-100 selection:bg-yellow-200 transition-colors duration-150">
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b-4 border-black dark:border-white bg-white dark:bg-zinc-800 px-4 py-3 shadow-[0_4px_0_0_rgba(0,0,0,1)] dark:shadow-[0_4px_0_0_rgba(255,255,255,1)] z-[3000]">
+        <div class="flex items-center gap-3">
+            <a href="../../index.html" class="border-2 border-black dark:border-white bg-yellow-300 dark:bg-yellow-400 text-black px-3 py-1 font-bold text-xs md:text-sm uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-400 transition-all">← HOME</a>
+            <h1 class="text-base md:text-xl font-black uppercase tracking-tight hidden sm:block">ARTIFICIAL STUPIDITY</h1>
+        </div>
+
+        <nav class="flex items-center gap-1 md:gap-2">
+            <button id="nav-chat" class="btn-nav active" onclick="switchView('chat')">CHAT</button>
+            <button id="nav-think" class="btn-nav" onclick="switchView('think')">THINK</button>
+            <button id="nav-game" class="btn-nav" onclick="switchView('game')">GAME</button>
+            <button id="nav-vs" class="btn-nav" onclick="switchView('vs')">DUAL AS</button>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <!-- Mobile Sidebar Toggle -->
+            <button id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" class="md:hidden border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white px-2.5 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">
+                📁
+            </button>
+            <!-- Theme Toggle -->
+            <button id="themeToggle" onclick="toggleDarkMode()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-200 dark:hover:bg-zinc-700 transition-all" title="Toggle Dark/Light Mode">THEME</button>
+            <!-- Brain Settings -->
+            <button id="settings-btn" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-yellow-200 dark:hover:bg-zinc-700 px-3 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 transition-all" onclick="openSettings()">
+                SETTINGS
+            </button>
+        </div>
+    </header>
+
+    <!-- Chat View -->
+    <div id="chat-view" class="flex-1 flex overflow-hidden p-2 md:p-6 gap-4 md:gap-6 min-h-0 relative">
+        <!-- Left Sidebar: Brain Stats & Archive -->
+        <aside id="chat-sidebar" class="w-64 flex-col hidden md:flex gap-4 overflow-hidden sidebar-container p-4 min-h-0 z-30">
+            <!-- Brain Stats -->
+            <div class="border-b-2 border-black dark:border-white pb-3">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-sm font-black uppercase tracking-wider">BRAIN STATS</h2>
+                    <span id="stat-density-percent" class="text-[10px] font-bold text-gray-500 dark:text-gray-400">0%</span>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400 mb-1">BRAIN DENSITY</div>
+                <div class="h-3 w-full bg-gray-200 dark:bg-zinc-700 border-2 border-black dark:border-white overflow-hidden mb-3">
+                    <div id="density-bar" class="h-full bg-black dark:bg-yellow-400 transition-all duration-500" style="width: 0%;"></div>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-gray-600 dark:text-gray-400 mb-1">BRAIN MAP</div>
+                <canvas id="neural-map" class="w-full h-28 border-2 border-black dark:border-white bg-gray-50 dark:bg-zinc-950 cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all" onclick="openNeuralExplorer()"></canvas>
+            </div>
+
+            <!-- Chats Section -->
+            <div class="flex-1 flex flex-col overflow-hidden min-h-0">
+                <h2 class="text-sm font-black uppercase tracking-wider mb-2 border-b-2 border-black dark:border-white pb-1">THE ARCHIVES</h2>
+                <div id="chat-list" class="flex-1 overflow-y-auto pr-1">
+                    <!-- Chat list items injected here -->
+                </div>
+                <button id="new-chat-btn" class="mt-2 w-full py-2 border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-yellow-200 dark:hover:bg-zinc-700 transition-all font-bold uppercase tracking-wider text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 text-center">
+                    + NEW CHAT
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="flex-1 flex flex-col notebook-page relative overflow-hidden min-h-0">
+            <!-- Sub-Banner with Live Stats & Quick Actions -->
+            <div class="px-4 py-2 bg-yellow-100 dark:bg-zinc-800 border-b-2 border-black dark:border-white text-xs font-bold uppercase tracking-tight text-gray-800 dark:text-gray-200 flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-3">
+                    <span>LEARNED: <span id="stat-words-learned" class="text-black dark:text-yellow-400 font-black">0</span> CONCEPTS</span>
+                    <span class="opacity-40">|</span>
+                    <span>CONNECTIONS: <span id="stat-synapses-count" class="text-black dark:text-yellow-400 font-black">0</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="self-chat-btn" onclick="toggleSelfChat()" class="border border-black dark:border-white px-2.5 py-0.5 text-[10px] font-black uppercase bg-yellow-300 dark:bg-yellow-400 text-black hover:bg-yellow-400 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] dark:shadow-[1px_1px_0px_0px_rgba(255,255,255,1)] transition-all" title="Let the AS talk to itself continuously">
+                        AUTO-CHAT
+                    </button>
+                    <button onclick="clearCurrentChatMessages()" class="border border-black dark:border-white px-2 py-0.5 text-[10px] font-bold uppercase bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-red-200 dark:hover:bg-red-900/50 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] dark:shadow-[1px_1px_0px_0px_rgba(255,255,255,1)]" title="Clear messages in this chat">
+                        CLEAR CHAT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="chat-container" class="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 flex flex-col space-y-3 min-h-0">
+                <!-- Messages go here -->
+            </div>
+
+            <!-- Typing -->
+            <div id="typing-indicator" class="hidden px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-400 animate-pulse">
+                * CHEWING ON A PENCIL... *
+            </div>
+
+            <!-- Input -->
+            <footer class="p-3 md:p-4 border-t-4 border-black dark:border-white bg-gray-50 dark:bg-zinc-900">
+                <form id="chat-form" class="flex gap-3">
+                    <input 
+                        type="text" 
+                        id="user-input" 
+                        placeholder="Type words and thoughts into the notebook..."
+                        class="flex-1 bg-white dark:bg-zinc-800 text-black dark:text-white border-2 border-black dark:border-white px-4 py-2 text-sm font-mono placeholder-gray-500 dark:placeholder-gray-400 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] outline-none focus:bg-yellow-50 dark:focus:bg-zinc-700"
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black hover:bg-yellow-300 dark:hover:bg-yellow-300 hover:text-black font-bold uppercase px-6 py-2 text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all active:translate-x-0.5 active:translate-y-0.5">
+                        POST
+                    </button>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Think View -->
+    <div id="think-view" class="flex-1 hidden overflow-hidden p-2 md:p-6 min-h-0">
+        <div class="flex-1 notebook-page p-4 md:p-6 flex flex-col gap-4 overflow-hidden min-h-0">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b-2 border-black dark:border-white pb-4">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-black uppercase tracking-tight">INTERNAL MONOLOGUE</h2>
+                    <p class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight mt-0.5">Watch the notebook attempt to form sentences from everything written in it.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="think-view-toggle-btn" class="border-2 border-black dark:border-white bg-red-400 hover:bg-red-500 text-black font-bold uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all active:translate-x-0.5 active:translate-y-0.5" onclick="toggleThinkViewThinking()">
+                        START TO THINK
+                    </button>
+                    <button onclick="clearThinkLog()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white px-3 py-2 text-xs font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-red-200 dark:hover:bg-red-900/50">
+                        CLEAR
+                    </button>
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold uppercase tracking-wider">
+                        <input type="checkbox" id="permanent-learning-toggle" class="w-4 h-4 accent-black dark:accent-yellow-400 border-2 border-black">
+                        PERMANENT LEARNING
+                    </label>
+                </div>
+            </div>
+            <div id="think-log" class="thought-log">
+                <div class="opacity-50 italic">* IDLE... CLICK 'START TO THINK' TO BEGIN *</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game View -->
+    <div id="game-view" class="flex-1 hidden overflow-hidden p-2 md:p-6 min-h-0 h-full">
+        <div class="flex-1 notebook-page overflow-hidden game-layout h-full">
+            <!-- Game Sidebar -->
+            <aside class="thought-sidebar min-h-0">
+                <div class="flex-1 flex flex-col overflow-hidden min-h-0">
+                    <div class="flex justify-between items-center mb-2 border-b-2 border-black dark:border-white pb-1">
+                        <h2 class="text-sm font-black uppercase tracking-wider">WORD INVENTORY</h2>
+                        <span id="inv-count-badge" class="text-xs font-bold px-1.5 py-0.5 bg-yellow-300 text-black border border-black">0</span>
+                    </div>
+                    <div class="mb-3 space-y-2">
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-400 block mb-1">ORGANIZE BY:</label>
+                            <select id="inventory-sort-mode" onchange="renderNeuralInventory()" class="w-full text-xs p-1.5 bg-white dark:bg-zinc-800 text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] outline-none font-mono font-bold uppercase">
+                                <option value="az">A - Z</option>
+                                <option value="newest">NEWEST FIRST</option>
+                                <option value="oldest">OLDEST FIRST</option>
+                                <option value="length">SHORTEST FIRST</option>
+                            </select>
+                        </div>
+                        <button onclick="spawnRandomFromInventory()" class="w-full py-1.5 border-2 border-black dark:border-white bg-yellow-300 dark:bg-yellow-400 text-black hover:bg-yellow-400 font-bold uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] active:translate-x-0.5 active:translate-y-0.5 transition-all">
+                            SPAWN RANDOM
+                        </button>
+                    </div>
+                    <div id="neural-inventory" class="flex-1 overflow-y-auto flex flex-wrap content-start gap-1.5 pr-1">
+                        <div class="opacity-40 italic text-[11px] w-full text-center py-4">Chat in CHAT tab to learn concepts...</div>
+                    </div>
+                </div>
+            </aside>
+
+                        <div class="relative flex-1 overflow-hidden" id="game-arena">
+                <div class="absolute top-0 left-0 right-0 p-2.5 bg-white dark:bg-zinc-800 border-b-2 border-black dark:border-white text-xs font-bold uppercase tracking-tight flex justify-between items-center z-10 shadow-[0_2px_0_0_rgba(0,0,0,1)] dark:shadow-[0_2px_0_0_rgba(255,255,255,1)]">
+                    <span class="truncate">WORD ALCHEMY: Drag words together to forge new ideas</span>
+                    <button onclick="clearGameArena()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white px-2 py-0.5 text-[10px] font-bold uppercase hover:bg-red-200 dark:hover:bg-red-900/50 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] dark:shadow-[1px_1px_0px_0px_rgba(255,255,255,1)] shrink-0 ml-2">
+                        CLEAR ARENA
+                    </button>
+                </div>
+
+                <div id="combo-display" class="pointer-events-none">X1</div>
+                
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none" id="game-overlay">
+                    <div class="text-center space-y-2 border-2 border-black dark:border-white bg-white/95 dark:bg-zinc-900/95 text-black dark:text-white p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+                        <div class="text-xl font-black uppercase">WORD ARENA</div>
+                        <div class="text-xs uppercase font-bold tracking-widest text-gray-600 dark:text-gray-400">Drag words on top of each other to combine</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="vs-view" class="flex-1 hidden overflow-hidden p-2 md:p-6 min-h-0">
+        <div class="flex-1 notebook-page p-4 md:p-6 flex flex-col gap-4 overflow-hidden min-h-0">
+                        <div class="border-b-2 border-black dark:border-white pb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-black uppercase tracking-tight">DUAL BRAIN: NOTEBOOK CONVERSATION</h2>
+                        <p class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-tight mt-0.5">Upload two save files to watch them converse.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="vs-toggle-btn" onclick="toggleVsChat()" class="border-2 border-black dark:border-white bg-green-400 hover:bg-green-500 text-black font-black uppercase px-4 py-2 text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all active:translate-x-0.5 active:translate-y-0.5">
+                            START DEBATE
+                        </button>
+                        <button onclick="clearVsChat()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white px-3 py-2 text-xs font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-red-200 dark:hover:bg-red-900/50">
+                            CLEAR
+                        </button>
+                        <button onclick="exportVsTranscript()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white px-3 py-2 text-xs font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-200 dark:hover:bg-zinc-700">
+                            EXPORT
+                        </button>
+                    </div>
+                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="border-2 border-black dark:border-white p-3 bg-yellow-50 dark:bg-zinc-900/60 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-black text-xs uppercase px-2 py-0.5 bg-yellow-300 text-black border border-black">BRAIN A</span>
+                            <span id="brain-a-stats" class="text-[10px] font-bold text-gray-500 dark:text-gray-400">Active Notebook</span>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <input type="text" id="brain-a-name" value="AS Alpha" class="flex-1 text-xs font-bold font-mono p-1 bg-white dark:bg-zinc-800 text-black dark:text-white border border-black dark:border-white outline-none">
+                            <label class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-yellow-200 dark:hover:bg-zinc-700 px-2 py-1 text-xs font-bold uppercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] shrink-0">
+                                UPLOAD A
+                                <input type="file" id="file-brain-a" accept=".json" onchange="loadBrainAFile(event)" class="hidden">
+                            </label>
+                            <button onclick="useCurrentForBrainA()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-yellow-200 dark:hover:bg-zinc-700 px-2 py-1 text-xs font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] shrink-0" title="Use current notebook brain">
+                                CURRENT
+                            </button>
+                        </div>
+                    </div>
+
+                                        <div class="border-2 border-black dark:border-white p-3 bg-cyan-50 dark:bg-zinc-900/60 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-black text-xs uppercase px-2 py-0.5 bg-cyan-300 text-black border border-black">BRAIN B</span>
+                            <span id="brain-b-stats" class="text-[10px] font-bold text-gray-500 dark:text-gray-400">Active Notebook</span>
+                        </div>
+                        <div class="flex gap-2 items-center">
+                            <input type="text" id="brain-b-name" value="AS Beta" class="flex-1 text-xs font-bold font-mono p-1 bg-white dark:bg-zinc-800 text-black dark:text-white border border-black dark:border-white outline-none">
+                            <label class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-cyan-200 dark:hover:bg-zinc-700 px-2 py-1 text-xs font-bold uppercase cursor-pointer shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] shrink-0">
+                                UPLOAD B
+                                <input type="file" id="file-brain-b" accept=".json" onchange="loadBrainBFile(event)" class="hidden">
+                            </label>
+                            <button onclick="cloneBrainAToB()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-cyan-200 dark:hover:bg-zinc-700 px-2 py-1 text-xs font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] shrink-0" title="Clone Brain A to Brain B">
+                                COPY A
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                                <div class="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-gray-300 dark:border-zinc-700">
+                    <div class="flex-1 min-w-[240px] flex gap-2">
+                        <input type="text" id="vs-starter-seed" placeholder="Starting thought or topic (or leave empty for random)..." class="flex-1 text-xs p-1.5 font-mono bg-white dark:bg-zinc-800 text-black dark:text-white border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] outline-none">
+                        <button onclick="randomVsTopic()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white px-2.5 py-1 text-xs font-bold uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-200 dark:hover:bg-zinc-700">TOPIC</button>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs font-bold uppercase">
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" id="vs-mutual-learning" class="w-4 h-4 accent-black dark:accent-yellow-400">
+                            <span>Teach Each Other</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+                        <div id="vs-dialogue-container" class="flex-1 overflow-y-auto p-4 flex flex-col space-y-3 min-h-0 bg-gray-50 dark:bg-zinc-950 border-2 border-black dark:border-white shadow-inner">
+                <div class="text-center opacity-40 italic text-xs py-8">
+                    Upload two save files or click "START DEBATE" to begin the conversation.
+                </div>
+            </div>
+
+                        <div id="vs-typing-indicator" class="hidden px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 animate-pulse">
+                * THINKING... *
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center border-b-2 border-black dark:border-white pb-2 mb-4">
+                <h2 class="text-xl font-black uppercase">BRAIN CONFIGURATION</h2>
+                <button onclick="closeSettings()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-800 hover:bg-yellow-200 px-2 py-0.5 font-bold text-sm shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">&times;</button>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+                <!-- Theme & Data -->
+                <div class="flex flex-wrap gap-2 pb-3 border-b-2 border-black dark:border-white">
+                    <button id="dark-toggle-modal" onclick="toggleDarkMode()" class="btn-utility">TOGGLE LIGHTS</button>
+                    <button onclick="exportData()" class="btn-utility">EXPORT BRAIN</button>
+                    <button onclick="importData()" class="btn-utility">IMPORT BRAIN</button>
+                    <button id="wipe-btn-modal" class="btn-utility bg-red-100 dark:bg-red-950/40 hover:bg-red-300">BURN NOTEBOOK</button>
+                </div>
+
+                <!-- Sliders -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold uppercase block mb-1">Response Speed (<span id="speed-val">1</span>s)</label>
+                        <input type="range" id="setting-speed" min="0" max="60" step="1" class="w-full h-2 bg-gray-200 dark:bg-zinc-700 border-2 border-black dark:border-white appearance-none cursor-pointer accent-black dark:accent-yellow-400">
+                        <p class="text-[10px] text-gray-600 dark:text-gray-400 mt-1">Slow speed = Deep thoughts</p>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase block mb-1">Filter Intensity</label>
+                        <input type="range" id="setting-filter" min="0" max="1" step="0.1" class="w-full h-2 bg-gray-200 dark:bg-zinc-700 border-2 border-black dark:border-white appearance-none cursor-pointer accent-black dark:accent-yellow-400">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase block mb-1">Coherence</label>
+                        <input type="range" id="setting-coherence" min="0" max="1" step="0.1" class="w-full h-2 bg-gray-200 dark:bg-zinc-700 border-2 border-black dark:border-white appearance-none cursor-pointer accent-black dark:accent-yellow-400">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase block mb-1">Word Bias (Old vs New)</label>
+                        <input type="range" id="setting-bias" min="0" max="1" step="0.1" class="w-full h-2 bg-gray-200 dark:bg-zinc-700 border-2 border-black dark:border-white appearance-none cursor-pointer accent-black dark:accent-yellow-400">
+                    </div>
+                </div>
+
+                <!-- Word Lists -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold uppercase block mb-1">Blacklist (CSV)</label>
+                        <textarea id="setting-blacklist" class="w-full h-18 p-2 text-xs font-mono bg-white dark:bg-zinc-900 border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] outline-none" placeholder="boredom, math, etc"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase block mb-1">Obsessed Words (CSV)</label>
+                        <textarea id="setting-obsessed" class="w-full h-18 p-2 text-xs font-mono bg-white dark:bg-zinc-900 border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] outline-none" placeholder="stupid, yum, etc"></textarea>
+                    </div>
+                </div>
+
+                <!-- Cleanup Toggle -->
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="setting-cleanup" class="w-4 h-4 accent-black dark:accent-yellow-400 border-2 border-black">
+                    <label for="setting-cleanup" class="text-xs font-bold uppercase">Auto-Cleanup (Delete unused words)</label>
+                </div>
+            </div>
+
+            <button onclick="closeSettings()" class="border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black hover:bg-yellow-300 dark:hover:bg-yellow-300 hover:text-black font-bold uppercase text-sm py-2.5 w-full shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] transition-all active:translate-x-0.5 active:translate-y-0.5">SAVE & CLOSE</button>
+        </div>
+    </div>
+
+        <div id="map-modal" class="fixed inset-0 z-[4000] hidden bg-black/80 flex flex-col p-4 md:p-8" onclick="if(event.target === this) closeNeuralExplorer()">
+        <div class="flex justify-between items-center mb-4 border-4 border-black dark:border-white bg-white dark:bg-zinc-800 p-3 md:p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+            <h2 class="text-xl md:text-2xl font-black uppercase tracking-tight text-black dark:text-white">MEMORY EXPLORER</h2>
+            <button onclick="closeNeuralExplorer()" class="border-2 border-black dark:border-white bg-red-400 hover:bg-red-500 text-black px-3 py-1 font-black text-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)]">&times;</button>
+        </div>
+        <div class="flex-1 relative bg-white dark:bg-zinc-950 border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] overflow-hidden cursor-grab active:cursor-grabbing" id="map-modal-content">
+            <canvas id="expanded-map" class="w-full h-full"></canvas>
+        </div>
+    </div>
+
+<script>
+
+        
+        let isSelfChatting = false;
+        let selfChatInterval = null;
+
+        function toggleSelfChat() {
+            isSelfChatting = !isSelfChatting;
+            const btn = document.getElementById('self-chat-btn');
+            if (isSelfChatting) {
+                btn.innerText = "STOP AUTO-CHAT";
+                btn.classList.add('bg-red-400');
+                btn.classList.remove('bg-yellow-300', 'dark:bg-yellow-400');
+                executeSelfChatTurn();
+                selfChatInterval = setInterval(executeSelfChatTurn, 2800);
+            } else {
+                btn.innerText = "AUTO-CHAT";
+                btn.classList.remove('bg-red-400');
+                btn.classList.add('bg-yellow-300', 'dark:bg-yellow-400');
+                if (selfChatInterval) {
+                    clearInterval(selfChatInterval);
+                    selfChatInterval = null;
+                }
+            }
+        }
+
+        function executeSelfChatTurn() {
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat) return;
+
+            let seed = "";
+            if (chat.messages.length > 0) {
+                seed = chat.messages[chat.messages.length - 1].text;
+            } else {
+                const starters = ["What is reality?", "I ponder the universe", "Why do thoughts wander?", "Calculations of existence", "Hello mind"];
+                seed = starters[Math.floor(Math.random() * starters.length)];
+            }
+            const reply = generateResponse(seed);
+            chat.messages.push({ sender: 'ai', text: reply });
+            appendMessage('ai', reply);
+            trainAI(reply);
+            debouncedSave();
+        }
+
+        
+        function generateResponseFromModel(targetModel, seedText = "", retryCount = 0) {
+            if (!targetModel || Object.keys(targetModel).length === 0) {
+                return "...";
+            }
+            const inputWords = seedText.split(/\s+/).filter(w => w.length > 0);
+            let currentKey = "";
+            
+            if (inputWords.length >= 2 && retryCount === 0) {
+                const randIdx = Math.floor(Math.random() * (inputWords.length - 1));
+                const target = inputWords[randIdx] + " " + inputWords[randIdx+1];
+                if (targetModel[target]) currentKey = target;
+                else {
+                    const match = Object.keys(targetModel).find(k => k.toLowerCase() === target.toLowerCase());
+                    if (match) currentKey = match;
+                }
+            }
+            
+            if (!currentKey && inputWords.length >= 1 && retryCount === 0) {
+                const target = inputWords[Math.floor(Math.random() * inputWords.length)];
+                if (targetModel[target]) currentKey = target;
+                else {
+                    const match = Object.keys(targetModel).find(k => k.toLowerCase() === target.toLowerCase());
+                    if (match) currentKey = match;
+                }
+            }
+
+            if (!currentKey) {
+                const keys = Object.keys(targetModel);
+                currentKey = keys[Math.floor(Math.random() * keys.length)];
+            }
+
+            let result = currentKey.split(" ");
+            const maxWords = Math.floor(10 + Math.random() * 22);
+            
+            for (let i = 0; i < maxWords; i++) {
+                let lookup = "";
+                if (result.length >= 2 && Math.random() < 0.75) {
+                    lookup = result[result.length-2] + " " + result[result.length-1];
+                } else {
+                    lookup = result[result.length-1];
+                }
+                
+                let choices = targetModel[lookup] || targetModel[result[result.length-1]];
+
+                if ((!choices || choices.length === 0) && result.length > 0) {
+                    const fallbackKey = Object.keys(targetModel).find(k => k.toLowerCase() === lookup.toLowerCase()) ||
+                                      Object.keys(targetModel).find(k => k.toLowerCase() === result[result.length-1].toLowerCase());
+                    if (fallbackKey) choices = targetModel[fallbackKey];
+                }
+
+                if (!choices || choices.length === 0) break;
+                result.push(choices[Math.floor(Math.random() * choices.length)]);
+            }
+            
+            const sentence = result.join(' ');
+            if (!sentence || sentence.length < 2) {
+                return retryCount < 3 ? generateResponseFromModel(targetModel, seedText, retryCount + 1) : "...curious.";
+            }
+            const endings = ['.', '!', '?', '...'];
+            return sentence.charAt(0).toUpperCase() + sentence.slice(1) + endings[Math.floor(Math.random() * endings.length)];
+        }
+
+        
+        let brainAModel = null;
+        let brainBModel = null;
+        let isVsRunning = false;
+        let vsInterval = null;
+        let vsLastSpeaker = 'B';
+        let vsLastMessage = '';
+        let vsTranscript = [];
+
+        function initVsViewDefaults() {
+            if (!brainAModel) {
+                brainAModel = JSON.parse(JSON.stringify(markovModel));
+                updateBrainStatsUI('A', Object.keys(brainAModel).length);
+            }
+            if (!brainBModel) {
+                brainBModel = JSON.parse(JSON.stringify(markovModel));
+                updateBrainStatsUI('B', Object.keys(brainBModel).length);
+            }
+        }
+
+        function updateBrainStatsUI(slot, count) {
+            const el = document.getElementById(slot === 'A' ? 'brain-a-stats' : 'brain-b-stats');
+            if (el) el.innerText = `${count} Learned Connections`;
+        }
+
+        function loadBrainAFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    const model = data.markovModel || data;
+                    if (!model || typeof model !== 'object') throw new Error("Invalid model format");
+                    brainAModel = model;
+                    document.getElementById('brain-a-name').value = file.name.replace('.json', '');
+                    updateBrainStatsUI('A', Object.keys(brainAModel).length);
+                    showVsNotice(`Brain A loaded: ${file.name} (${Object.keys(brainAModel).length} concepts)`);
+                } catch(err) {
+                    alert("Error loading Brain A: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function loadBrainBFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    const model = data.markovModel || data;
+                    if (!model || typeof model !== 'object') throw new Error("Invalid model format");
+                    brainBModel = model;
+                    document.getElementById('brain-b-name').value = file.name.replace('.json', '');
+                    updateBrainStatsUI('B', Object.keys(brainBModel).length);
+                    showVsNotice(`Brain B loaded: ${file.name} (${Object.keys(brainBModel).length} concepts)`);
+                } catch(err) {
+                    alert("Error loading Brain B: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function useCurrentForBrainA() {
+            brainAModel = JSON.parse(JSON.stringify(markovModel));
+            document.getElementById('brain-a-name').value = "Active Notebook";
+            updateBrainStatsUI('A', Object.keys(brainAModel).length);
+            showVsNotice("Brain A set to active notebook.");
+        }
+
+        function cloneBrainAToB() {
+            if (!brainAModel) brainAModel = JSON.parse(JSON.stringify(markovModel));
+            brainBModel = JSON.parse(JSON.stringify(brainAModel));
+            document.getElementById('brain-b-name').value = document.getElementById('brain-a-name').value + " (Clone)";
+            updateBrainStatsUI('B', Object.keys(brainBModel).length);
+            showVsNotice("Cloned Brain A to Brain B.");
+        }
+
+        function randomVsTopic() {
+            const topics = [
+                "What is time?",
+                "Where do thoughts come from?",
+                "The nature of memory",
+                "Why do we dream?",
+                "What lies beyond the stars?",
+                "Can a machine feel curiosity?",
+                "What is consciousness?"
+            ];
+            const rand = topics[Math.floor(Math.random() * topics.length)];
+            document.getElementById('vs-starter-seed').value = rand;
+        }
+
+        function showVsNotice(msg) {
+            const container = document.getElementById('vs-dialogue-container');
+            const notice = document.createElement('div');
+            notice.className = "text-center text-xs font-bold uppercase tracking-wider text-gray-500 py-1";
+            notice.innerText = `// ${msg}`;
+            container.appendChild(notice);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearVsChat() {
+            const container = document.getElementById('vs-dialogue-container');
+            container.innerHTML = '<div class="text-center opacity-40 italic text-xs py-8">Dialogue cleared. Click "START DEBATE" to begin.</div>';
+            vsTranscript = [];
+            vsLastMessage = '';
+            vsLastSpeaker = 'B';
+        }
+
+        function toggleVsChat() {
+            isVsRunning = !isVsRunning;
+            const btn = document.getElementById('vs-toggle-btn');
+            if (isVsRunning) {
+                initVsViewDefaults();
+                btn.innerText = "PAUSE DEBATE";
+                btn.classList.remove('bg-green-400', 'hover:bg-green-500');
+                btn.classList.add('bg-red-400', 'hover:bg-red-500');
+
+                // If starting fresh and empty, post seed
+                if (!vsLastMessage) {
+                    const seed = document.getElementById('vs-starter-seed').value.trim();
+                    vsLastMessage = seed || "What is your perspective on existence?";
+                    appendVsMessage('SEED', 'System Topic', vsLastMessage);
+                }
+
+                executeVsStep();
+                vsInterval = setInterval(executeVsStep, 2600);
+            } else {
+                btn.innerText = "RESUME DEBATE";
+                btn.classList.remove('bg-red-400', 'hover:bg-red-500');
+                btn.classList.add('bg-green-400', 'hover:bg-green-500');
+                if (vsInterval) {
+                    clearInterval(vsInterval);
+                    vsInterval = null;
+                }
+            }
+        }
+
+        function executeVsStep() {
+            const speaker = vsLastSpeaker === 'B' ? 'A' : 'B';
+            const speakerName = document.getElementById(speaker === 'A' ? 'brain-a-name' : 'brain-b-name').value || `AS ${speaker}`;
+            const targetModel = speaker === 'A' ? brainAModel : brainBModel;
+            const listenerModel = speaker === 'A' ? brainBModel : brainAModel;
+            const mutualLearning = document.getElementById('vs-mutual-learning').checked;
+
+            const response = generateResponseFromModel(targetModel, vsLastMessage);
+            appendVsMessage(speaker, speakerName, response);
+
+            if (mutualLearning && listenerModel) {
+                // Train other brain
+                const words = response.split(/\s+/).filter(w => w.length > 0);
+                for (let i = 0; i < words.length - 1; i++) {
+                    const key = words[i];
+                    if (!listenerModel[key]) listenerModel[key] = [];
+                    listenerModel[key].push(words[i+1]);
+                }
+                updateBrainStatsUI(speaker === 'A' ? 'B' : 'A', Object.keys(listenerModel).length);
+            }
+
+            vsLastMessage = response;
+            vsLastSpeaker = speaker;
+        }
+
+        function appendVsMessage(role, name, text) {
+            const container = document.getElementById('vs-dialogue-container');
+            const placeholder = container.querySelector('.italic');
+            if (placeholder) placeholder.remove();
+
+            const div = document.createElement('div');
+            const isA = role === 'A';
+            const isSeed = role === 'SEED';
+
+            if (isSeed) {
+                div.className = "w-full text-center border-2 border-black dark:border-white p-2.5 bg-yellow-100 dark:bg-zinc-800 text-black dark:text-white font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] my-2";
+                div.innerHTML = `<span class="opacity-70">TOPIC:</span> "${escapeHtml(text)}"`;
+            } else if (isA) {
+                div.className = "self-start max-w-[85%] border-2 border-black dark:border-white p-3 bg-yellow-200 dark:bg-yellow-400 text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-xs md:text-sm";
+                div.innerHTML = `
+                    <div class="text-[10px] font-black uppercase tracking-wider mb-1 flex justify-between items-center border-b border-black/30 pb-0.5">
+                        <span>[${escapeHtml(name)}]</span>
+                        <span class="opacity-50">${new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <div class="font-bold break-words leading-relaxed">${escapeHtml(text)}</div>
+                `;
+            } else {
+                div.className = "self-end max-w-[85%] border-2 border-black dark:border-white p-3 bg-cyan-200 dark:bg-cyan-300 text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] text-xs md:text-sm";
+                div.innerHTML = `
+                    <div class="text-[10px] font-black uppercase tracking-wider mb-1 flex justify-between items-center border-b border-black/30 pb-0.5">
+                        <span class="opacity-50">${new Date().toLocaleTimeString()}</span>
+                        <span>[${escapeHtml(name)}]</span>
+                    </div>
+                    <div class="font-bold break-words leading-relaxed">${escapeHtml(text)}</div>
+                `;
+            }
+
+            container.appendChild(div);
+            vsTranscript.push(`[${name}]: ${text}`);
+            requestAnimationFrame(() => container.scrollTop = container.scrollHeight);
+        }
+
+        function exportVsTranscript() {
+            if (vsTranscript.length === 0) {
+                alert("Dialogue is empty! Run a debate first.");
+                return;
+            }
+            const nameA = document.getElementById('brain-a-name').value || 'Notebook A';
+            const nameB = document.getElementById('brain-b-name').value || 'Notebook B';
+            const header = `=== NOTEBOOK CONVERSATION TRANSCRIPT ===\nParticipants: ${nameA} vs ${nameB}\nDate: ${new Date().toLocaleString()}\n====================================\n\n`;
+            const blob = new Blob([header + vsTranscript.join('\n\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `as_debate_${nameA}_vs_${nameB}_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+
+        // --- UX Utilities & Helpers ---
+        function escapeHtml(text) {
+            const p = document.createElement('p');
+            p.textContent = text;
+            return p.innerHTML;
+        }
+
+        function sendPrompt(promptText) {
+            userInput.value = promptText;
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+
+        function clearCurrentChatMessages() {
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat) return;
+            if (confirm("Clear all messages in this conversation?")) {
+                chat.messages = [];
+                save();
+                renderChat();
+            }
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('chat-sidebar');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+            sidebar.classList.toggle('absolute');
+            sidebar.classList.toggle('inset-y-0');
+            sidebar.classList.toggle('left-0');
+            sidebar.classList.toggle('bg-white');
+            sidebar.classList.toggle('dark:bg-zinc-800');
+            sidebar.classList.toggle('shadow-2xl');
+        }
+
+        function updateLiveStats() {
+            const vocabCount = Object.keys(markovModel).length;
+            const synapseCount = Object.values(markovModel).reduce((acc, arr) => acc + (arr ? arr.length : 0), 0);
+            
+            const wordsEl = document.getElementById('stat-words-learned');
+            const synEl = document.getElementById('stat-synapses-count');
+            if (wordsEl) wordsEl.innerText = neuralInventory.size;
+            if (synEl) synEl.innerText = vocabCount;
+
+            const invBadge = document.getElementById('inv-count-badge');
+            if (invBadge) invBadge.innerText = neuralInventory.size;
+        }
+
+        function clearThinkLog() {
+            thinkLog.innerHTML = '<div class="opacity-50 italic">* Log Cleared *</div>';
+        }
+
+        function clearGameArena() {
+            gameNodes.forEach(n => n.el.remove());
+            gameNodes = [];
+            const overlay = document.getElementById('game-overlay');
+            if (overlay) overlay.style.display = 'flex';
+        }
+
+        function spawnRandomFromInventory() {
+            const items = Array.from(neuralInventory);
+            if (items.length === 0) {
+                alert("Inventory is empty! Chat with the AS first to teach it concepts.");
+                return;
+            }
+            const randomWord = items[Math.floor(Math.random() * items.length)];
+            spawnCraftNode(randomWord, false, false);
+            const overlay = document.getElementById('game-overlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+
+        // --- Persistence Keys ---
+        const DB_CHATS = 'au_v2_chats';
+        const DB_MARKOV = 'au_v2_markov';
+        const DB_CURRENT_ID = 'au_v2_current_chat';
+        const DB_DARK = 'au_v2_darkmode';
+        const DB_INVENTORY = 'au_v2_inventory';
+        const DB_MSG_COUNT = 'au_v2_msg_count';
+        const DB_SETTINGS = 'au_v2_settings';
+        const DB_WORD_USAGE = 'au_v2_word_usage';
+
+        // --- State ---
+        let chats = JSON.parse(localStorage.getItem(DB_CHATS)) || [];
+        let markovModel = JSON.parse(localStorage.getItem(DB_MARKOV)) || {};
+        let currentChatId = localStorage.getItem(DB_CURRENT_ID) || null;
+        let isDarkMode = localStorage.getItem(DB_DARK) !== 'false';
+        let neuralInventory = new Set(JSON.parse(localStorage.getItem(DB_INVENTORY)) || []);
+        let userMessageCount = parseInt(localStorage.getItem(DB_MSG_COUNT)) || 0;
+        let wordLastUsed = JSON.parse(localStorage.getItem(DB_WORD_USAGE)) || {};
+
+        let defaultSettings = {
+            filterIntensity: 0.5,
+            coherence: 0.8,
+            wordBias: 0.5,
+            blacklist: "",
+            obsessed: "",
+            autoCleanup: false,
+            responseSpeed: 1
+        };
+        let settings = JSON.parse(localStorage.getItem(DB_SETTINGS)) || defaultSettings;
+        settings = { ...defaultSettings, ...settings };
+
+        // --- Game & Think State ---
+        let isBrainstorming = false;
+        let thoughtInterval = null;
+        let gameNodes = [];
+        let gameScore = 0;
+        let gameCombo = 1;
+        let comboTimer = null;
+        let isThinkingManual = false; // Initial state
+        let isThinkViewActive = false;
+        let lastThinkTime = 0;
+        let lastInternalThought = "";
+        let pendingAIResponses = 0;
+        
+                let draggedNode = null;
+        let alchemySlots = [null, null];
+
+        const selfTalkPrefixes = [
+            "I wonder if ", "Maybe ", "But ", "Actually, ", "Wait... ", 
+            "So then, ", "What if ", "Perhaps ", "I think ", "Does "
+        ];
+
+        // --- DOM Elements ---
+        const chatContainer = document.getElementById('chat-container');
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const chatList = document.getElementById('chat-list');
+        const newChatBtn = document.getElementById('new-chat-btn');
+
+        const thinkLog = document.getElementById('think-log');
+        const permLearning = document.getElementById('permanent-learning-toggle');
+        const gameThoughtStream = document.getElementById('game-thought-stream');
+        const gameArena = document.getElementById('game-arena');
+        const scoreDisplay = document.getElementById('game-score');
+
+        const mapModal = document.getElementById('map-modal');
+        const expandedCanvas = document.getElementById('expanded-map');
+        const ectx = expandedCanvas.getContext('2d');
+
+        // --- Panning State ---
+        let panX = 0;
+        let panY = 0;
+        let mapZoom = 1.0;
+        let isDraggingMap = false;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+
+        // --- Initialize ---
+        function init() {
+            document.documentElement.classList.toggle('dark', isDarkMode);
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            
+            if (chats.length === 0) {
+                createNewChat();
+            } else {
+                const chatExists = chats.some(c => c.id === currentChatId);
+                if (!currentChatId || !chatExists) {
+                    currentChatId = chats[0].id;
+                }
+            }
+
+            renderSidebar();
+            renderChat();
+            renderNeuralInventory();
+            updateBrainDensity();
+
+            // Setup Settings Inputs
+            const speedInput = document.getElementById('setting-speed');
+            speedInput.value = settings.responseSpeed;
+            document.getElementById('speed-val').innerText = settings.responseSpeed;
+            speedInput.oninput = (e) => document.getElementById('speed-val').innerText = e.target.value;
+            
+            document.getElementById('setting-filter').value = settings.filterIntensity;
+            document.getElementById('setting-coherence').value = settings.coherence;
+            document.getElementById('setting-bias').value = settings.wordBias;
+            document.getElementById('setting-blacklist').value = settings.blacklist;
+            document.getElementById('setting-obsessed').value = settings.obsessed;
+            document.getElementById('setting-cleanup').checked = settings.autoCleanup;
+
+            // Setup UI Events
+            document.getElementById('dark-toggle-modal').onclick = toggleDarkMode;
+            document.getElementById('wipe-btn-modal').onclick = burnNotebook;
+
+            // Setup Map Dragging
+            expandedCanvas.onmousedown = (e) => {
+                isDraggingMap = true;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            };
+            window.addEventListener('mousemove', (e) => {
+                if (isDraggingMap && isMapExpanded) {
+                    panX += e.clientX - lastMouseX;
+                    panY += e.clientY - lastMouseY;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                }
+            });
+            window.addEventListener('mouseup', () => {
+                isDraggingMap = false;
+            });
+
+            animateNeuralMap();
+            
+            // Background thinking loop
+            setInterval(() => {
+                if (isBrainstorming || (isThinkViewActive && isThinkingManual)) executeThought();
+            }, 3000);
+            
+                        setInterval(() => {
+                if (gameNodes.length > 20) {
+                    const oldest = gameNodes.find(n => !n.isResult);
+                    if (oldest) {
+                        oldest.el.remove();
+                        gameNodes = gameNodes.filter(n => n !== oldest);
+                    }
+                }
+            }, 5000);
+        }
+
+        // --- Settings Management ---
+        function openSettings() {
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function closeSettings() {
+            settings.responseSpeed = parseInt(document.getElementById('setting-speed').value);
+            settings.filterIntensity = parseFloat(document.getElementById('setting-filter').value);
+            settings.coherence = parseFloat(document.getElementById('setting-coherence').value);
+            settings.wordBias = parseFloat(document.getElementById('setting-bias').value);
+            settings.blacklist = document.getElementById('setting-blacklist').value;
+            settings.obsessed = document.getElementById('setting-obsessed').value;
+            settings.autoCleanup = document.getElementById('setting-cleanup').checked;
+            
+            save();
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.documentElement.classList.toggle('dark', isDarkMode);
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            localStorage.setItem(DB_DARK, isDarkMode);
+            localStorage.setItem('beep_theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        function burnNotebook() {
+            if (confirm("Burn the whole notebook? This deletes ALL chats and memories!")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // --- Chat Management ---
+        function createNewChat() {
+            const id = 'chat_' + Date.now();
+            const newChat = {
+                id: id,
+                title: 'New Scribble',
+                messages: [],
+                threshold: Math.floor(Math.random() * 4) + 1 // 1-4 message silence period
+            };
+            chats.unshift(newChat);
+            currentChatId = id;
+            save();
+            renderSidebar();
+            renderChat();
+        }
+
+        function deleteChat(id, event) {
+            event.stopPropagation();
+            if (!confirm("Rip this page out of the notebook?")) return;
+            chats = chats.filter(c => c.id !== id);
+            if (chats.length === 0) {
+                createNewChat();
+            } else if (currentChatId === id) {
+                currentChatId = chats[0].id;
+            }
+            save();
+            renderSidebar();
+            renderChat();
+        }
+
+        function switchChat(id) {
+            currentChatId = id;
+            save();
+            renderSidebar();
+            renderChat();
+        }
+
+        function save() {
+            localStorage.setItem(DB_CHATS, JSON.stringify(chats));
+            localStorage.setItem(DB_MARKOV, JSON.stringify(markovModel));
+            localStorage.setItem(DB_CURRENT_ID, currentChatId);
+            localStorage.setItem(DB_INVENTORY, JSON.stringify(Array.from(neuralInventory)));
+            localStorage.setItem(DB_MSG_COUNT, userMessageCount);
+            localStorage.setItem(DB_SETTINGS, JSON.stringify(settings));
+            localStorage.setItem(DB_WORD_USAGE, JSON.stringify(wordLastUsed));
+        }
+
+        // Optimized non-blocking save
+        let saveTimeout = null;
+        function debouncedSave() {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                save();
+                saveTimeout = null;
+            }, 1500);
+        }
+
+        function exportData() {
+            const data = {
+                chats,
+                markovModel,
+                currentChatId,
+                isDarkMode,
+                neuralInventory: Array.from(neuralInventory),
+                userMessageCount
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `au_brain_export_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        if (!imported.markovModel || !imported.chats) throw new Error("Invalid notebook brain file.");
+                        if (confirm("Importing will overwrite your current notebook. Proceed?")) {
+                            localStorage.setItem(DB_CHATS, JSON.stringify(imported.chats));
+                            localStorage.setItem(DB_MARKOV, JSON.stringify(imported.markovModel));
+                            localStorage.setItem(DB_CURRENT_ID, imported.currentChatId || '');
+                            localStorage.setItem(DB_DARK, imported.isDarkMode ?? true);
+                            localStorage.setItem(DB_INVENTORY, JSON.stringify(imported.neuralInventory || []));
+                            localStorage.setItem(DB_MSG_COUNT, imported.userMessageCount || 0);
+                            location.reload();
+                        }
+                    } catch (err) { alert("Import failed: " + err.message); }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // --- Internal Thinking Logic ---
+        function executeThought() {
+            const now = Date.now();
+            if (now - lastThinkTime < 2000) return;
+            lastThinkTime = now;
+
+            const keys = Object.keys(markovModel);
+            if (keys.length === 0) {
+                if (isThinkViewActive && isThinkingManual) {
+                    const entry = document.createElement('div');
+                    entry.className = "mb-2 text-red-500/70 italic animate-in fade-in duration-500";
+                    entry.innerText = "> System has no knowledge. Talk to me in the CHAT tab so I have something to think about...";
+                    thinkLog.prepend(entry);
+                    if (thinkLog.children.length > 100) thinkLog.lastChild.remove();
+                    toggleThinkViewThinking(); // Stop thinking since we can't
+                }
+                return;
+            }
+
+            // Use the last thought as context to make it feel like it's talking to itself
+            let rawThought = generateResponse(lastInternalThought, 0);
+            
+            // Add some internal monologue "flavor" occasionally
+            let thought = rawThought;
+            if (Math.random() < 0.4) {
+                const prefix = selfTalkPrefixes[Math.floor(Math.random() * selfTalkPrefixes.length)];
+                thought = prefix + rawThought.charAt(0).toLowerCase() + rawThought.slice(1);
+            }
+            lastInternalThought = rawThought;
+            
+            // 1. Recursive Learning
+            if (isThinkViewActive && permLearning.checked) {
+                trainAI(thought);
+            } else { updateBrainDensityDebounced(); }
+
+            // 2. Update Think View
+            if (isThinkViewActive) {
+                const entry = document.createElement('div');
+                entry.className = "mb-2 border-b border-white/5 pb-1 animate-in slide-in-from-left duration-500";
+                entry.innerHTML = `<span class="text-blue-400 font-bold">[${new Date().toLocaleTimeString()}]</span> ${thought}`;
+                thinkLog.prepend(entry);
+                if (thinkLog.children.length > 100) thinkLog.lastChild.remove();
+            }
+        }
+
+        let inventoryTimeout = null;
+        function renderNeuralInventory() {
+            if (inventoryTimeout) clearTimeout(inventoryTimeout);
+            inventoryTimeout = setTimeout(() => {
+                performInventoryRender();
+                inventoryTimeout = null;
+            }, 500);
+        }
+
+        function performInventoryRender() {
+            const container = document.getElementById('neural-inventory');
+            const sortMode = document.getElementById('inventory-sort-mode')?.value || 'az';
+            container.innerHTML = '';
+            let items = Array.from(neuralInventory);
+            
+            if (sortMode === 'az') {
+                items.sort((a, b) => a.localeCompare(b));
+            } else if (sortMode === 'newest') {
+                items.reverse();
+            } else if (sortMode === 'length') {
+                items.sort((a, b) => a.length - b.length);
+            }
+            // 'oldest' uses the natural insertion order of the Set
+
+            items.forEach(word => {
+                const el = document.createElement('div');
+                el.className = `inventory-item shadow-sm hover:scale-105 transition-transform border-2 border-transparent active:border-ink-blue`;
+                el.innerText = word.toUpperCase();
+                el.onmousedown = () => spawnCraftNode(word, false, true);
+                container.appendChild(el);
+            });
+        }
+
+        function performAlchemy(nodeA, nodeB) {
+            const wordA = nodeA.innerText.toLowerCase();
+            const wordB = nodeB.innerText.toLowerCase();
+            const seed = `${wordA} ${wordB}`;
+            
+            // Use the AI to generate a contextual thought about these two elements
+            const response = generateResponse(seed, 0);
+            
+            // Split and filter for potential results
+            const resultWords = response.toLowerCase().split(/\s+/);
+            const exclude = [wordA, wordB, 'and', 'the', 'is', 'of', 'to', 'a', 'in', 'that', 'it', 'with', 'for', 'was', 'were', 'had', 'has', 'have'];
+            
+            // 1. Try to find a meaningful word from the AI's generated response
+            let newConcept = resultWords.find(w => w.length > 3 && !exclude.includes(w));
+            
+            // 2. If that fails, look into the Markov model keys for a related word from its memory
+            if (!newConcept) {
+                const relatedKeys = Object.keys(markovModel).filter(k => 
+                    (k.includes(wordA) || k.includes(wordB)) && 
+                    !exclude.includes(k.toLowerCase()) &&
+                    k.split(' ').length === 1
+                );
+                
+                if (relatedKeys.length > 0) {
+                    newConcept = relatedKeys[Math.floor(Math.random() * relatedKeys.length)];
+                }
+            }
+
+            // 3. Absolute fallback: pick any single word the AI knows from its learned vocabulary
+            if (!newConcept) {
+                 const allWords = Object.keys(markovModel).filter(k => k.split(' ').length === 1 && !exclude.includes(k.toLowerCase()));
+                 newConcept = allWords.length > 0 ? allWords[Math.floor(Math.random() * allWords.length)] : "nothing";
+            }
+            
+            spawnCraftNode(newConcept, true, false, (nodeA.offsetLeft + nodeB.offsetLeft)/2, (nodeA.offsetTop + nodeB.offsetTop)/2);
+            
+            // Persist the discovery
+            neuralInventory.add(newConcept.toLowerCase());
+            renderNeuralInventory();
+            save();
+        }
+
+        function spawnCraftNode(text, isResult = false, isGrabbed = false, startX = null, startY = null) {
+            const node = document.createElement('div');
+            let classes = "craft-node animate-in zoom-in duration-300";
+            
+            if (isResult) classes += " result";
+            
+            text = text.toLowerCase().substring(0, 25); 
+
+            node.className = classes;
+            if (isResult) {
+                node.classList.add('result'); // Apply blue highlight
+                setTimeout(() => { node.classList.remove('result'); }, 1000); // Fade back after 1 second
+            }
+
+            node.innerText = text.toUpperCase();
+            
+            const initialX = startX !== null ? startX : Math.random() * (gameArena.clientWidth - 150);
+            const initialY = startY !== null ? startY : Math.random() * (gameArena.clientHeight - 50);
+            node.style.left = initialX + 'px';
+            node.style.top = initialY + 'px';
+            
+            // Physics properties influenced by thought content
+            const nodeData = {
+                el: node,
+                x: initialX,
+                y: initialY,
+                vx: 0,
+                vy: 0,
+                isResult: isResult
+            };
+            
+            gameArena.appendChild(node);
+            nodeData.w = node.offsetWidth;
+            nodeData.h = node.offsetHeight;
+
+            function startDrag(clientX, clientY) {
+                draggedNode = nodeData;
+                node.style.transition = 'none';
+                node.style.zIndex = '1000';
+            }
+
+            node.onmousedown = (e) => startDrag(e.clientX, e.clientY);
+            node.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                startDrag(touch.clientX, touch.clientY);
+            }, { passive: true });
+
+            if (isGrabbed) {
+                draggedNode = nodeData;
+                node.style.transition = 'none';
+                node.style.zIndex = '1000';
+            }
+            
+            function handleMove(clientX, clientY) {
+                if (draggedNode === nodeData) {
+                    const rect = gameArena.getBoundingClientRect();
+                    nodeData.x = clientX - rect.left - (node.offsetWidth / 2);
+                    nodeData.y = clientY - rect.top - (node.offsetHeight / 2);
+                    node.style.left = nodeData.x + 'px';
+                    node.style.top = nodeData.y + 'px';
+                }
+            }
+
+            window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+            window.addEventListener('touchmove', (e) => {
+                if (draggedNode === nodeData) {
+                    const touch = e.touches[0];
+                    handleMove(touch.clientX, touch.clientY);
+                }
+            }, { passive: true });
+
+            function endDrag() {
+                if (draggedNode === nodeData) {
+                    node.style.zIndex = '10';
+                    
+                                        const target = gameNodes.find(n => n !== nodeData && 
+                        Math.hypot(n.x - nodeData.x, n.y - nodeData.y) < 40);
+                    
+                    if (target) {
+                        performAlchemy(nodeData.el, target.el);
+                        // Cleanup consumed nodes
+                        [nodeData, target].forEach(n => {
+                            spawnInkDrip(n.x + (n.w || 40), n.y + (n.h || 20));
+                            gameNodes = gameNodes.filter(gn => gn !== n);
+                            n.el.remove();
+                        });
+                    } else if (isResult) {
+                        // If we clicked a standalone result, add it to inventory
+                        neuralInventory.add(text.toLowerCase());
+                        renderNeuralInventory();
+                        save(); // Ensure standalone clicks are saved
+                        trainAI(`Combination of words produced ${text}.`);
+                        spawnInkDrip(nodeData.x, nodeData.y);
+                        updateBrainDensity();
+                        gameNodes = gameNodes.filter(n => n !== nodeData);
+                        node.remove();
+                    }
+                    draggedNode = null;
+                }
+            }
+
+            node.onmouseup = endDrag;
+            node.addEventListener('touchend', endDrag);
+
+            gameNodes.push(nodeData);
+        }
+
+        // --- The "Algorithm" ---
+        function trainAI(text) {
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            
+            if (settings.autoCleanup) cleanupOldWords();
+            updateBrainDensityDebounced();
+
+            if (words.length < 3) {
+                for (let i = 0; i < words.length - 1; i++) {
+                    const w = words[i];
+                    wordLastUsed[w.toLowerCase()] = Date.now();
+                    const key = w;
+                    if (!markovModel[key]) markovModel[key] = [];
+                    markovModel[key].push(words[i+1]);
+                }
+                return;
+            }
+            for (let i = 0; i < words.length - 2; i++) {
+                wordLastUsed[words[i].toLowerCase()] = Date.now();
+                const trigramKey = words[i] + " " + words[i+1];
+                const bigramKey = words[i];
+                const next = words[i+2];
+                
+                if (!markovModel[trigramKey]) markovModel[trigramKey] = [];
+                markovModel[trigramKey].push(next);
+                
+                if (!markovModel[bigramKey]) markovModel[bigramKey] = [];
+                markovModel[bigramKey].push(words[i+1]);
+            }
+        }
+
+        function cleanupOldWords() {
+            const now = Date.now();
+            const maxAge = 1000 * 60 * 60 * 24; // 24 hours
+            
+            Object.keys(wordLastUsed).forEach(word => {
+                if (now - wordLastUsed[word] > maxAge) {
+                    Object.keys(markovModel).forEach(key => {
+                        if (key.includes(word)) delete markovModel[key];
+                        else markovModel[key] = markovModel[key].filter(w => w.toLowerCase() !== word);
+                    });
+                    delete wordLastUsed[word];
+                    neuralInventory.delete(word);
+                }
+            });
+        }
+
+        function generateResponse(seedText = "", retryCount = 0) {
+            const inputWords = seedText.split(/\s+/).filter(w => w.length > 0);
+            let currentKey = "";
+            
+            // Try to use input keywords, but if we are retrying (to avoid copying), pick randomly
+            if (inputWords.length >= 2 && retryCount === 0) {
+                const randIdx = Math.floor(Math.random() * (inputWords.length - 1));
+                const target = inputWords[randIdx] + " " + inputWords[randIdx+1];
+                if (markovModel[target]) currentKey = target;
+                else {
+                    const match = Object.keys(markovModel).find(k => k.toLowerCase() === target.toLowerCase());
+                    if (match) currentKey = match;
+                }
+            }
+            
+            if (!currentKey && inputWords.length >= 1 && retryCount === 0) {
+                const target = inputWords[Math.floor(Math.random() * inputWords.length)];
+                if (markovModel[target]) currentKey = target;
+                else {
+                    const match = Object.keys(markovModel).find(k => k.toLowerCase() === target.toLowerCase());
+                    if (match) currentKey = match;
+                }
+            }
+
+            // If retryCount > 0, we explicitly ignore input words to break a parrot loop
+            if (retryCount > 2) {
+                currentKey = ""; 
+            }
+
+            if (!currentKey) {
+                const keys = Object.keys(markovModel);
+                if (keys.length === 0) return "My notebook is empty. Write something for me to learn.";
+                currentKey = keys[Math.floor(Math.random() * keys.length)];
+            }
+
+            const speed = settings.responseSpeed;
+            const speedFactor = speed / 60;
+            const isDeep = speed > 30; // Consider it 'Deep Thinking' if speed is over 30s
+            let result = currentKey.split(" ");
+            const maxWords = Math.floor((10 + speedFactor * 40) + (15 + speedFactor * 45) * Math.random());
+            
+            for (let i = 0; i < maxWords; i++) {
+                if (speed > 40 && Math.random() < 0.1) { // High latency triggers thematic jumping
+                    const keys = Object.keys(markovModel);
+                    result.push(keys[Math.floor(Math.random() * keys.length)].split(' ')[0]);
+                    continue;
+                }
+                let lookup = "";
+                if (result.length >= 2 && Math.random() < settings.coherence) {
+                    lookup = result[result.length-2] + " " + result[result.length-1];
+                } else {
+                    lookup = result[result.length-1];
+                }
+                
+                let choices = markovModel[lookup] || markovModel[result[result.length-1]];
+
+                if ((!choices || choices.length === 0) && result.length > 0) {
+                    const fallbackKey = Object.keys(markovModel).find(k => k.toLowerCase() === lookup.toLowerCase()) ||
+                                      Object.keys(markovModel).find(k => k.toLowerCase() === result[result.length-1].toLowerCase());
+                    if (fallbackKey) choices = markovModel[fallbackKey];
+                }
+
+                if (!choices || choices.length === 0) break;
+
+                const nextWord = selectFromChoices(choices);
+                result.push(nextWord);
+                wordLastUsed[nextWord.toLowerCase()] = Date.now();
+            }
+
+            function selectFromChoices(choices) {
+                const blacklist = (settings.blacklist || "").toLowerCase().split(',').map(w => w.trim()).filter(w => w);
+                const obsessed = (settings.obsessed || "").toLowerCase().split(',').map(w => w.trim()).filter(w => w);
+                const intensity = settings.filterIntensity;
+
+                let weighted = choices.map((word, index) => {
+                    const lower = word.toLowerCase();
+                    if (blacklist.includes(lower)) return null;
+                    if (intensity > 0.8 && word.length < 3) return null;
+
+                    let w = 1.0;
+                    if (obsessed.includes(lower)) w *= 10.0;
+                    const pos = index / choices.length;
+                    w *= (1 + pos * (settings.wordBias - 0.5) * 2);
+                    return { word, weight: Math.max(0.01, w) };
+                }).filter(n => n);
+
+                if (weighted.length === 0) return choices[Math.floor(Math.random() * choices.length)];
+                const total = weighted.reduce((s, i) => s + i.weight, 0);
+                let r = Math.random() * total;
+                for (const i of weighted) { r -= i.weight; if (r <= 0) return i.word; }
+                return weighted[0].word;
+            }
+            
+            const sentence = result.join(' ');
+            
+            // Final fallback to prevent empty replies if all logic fails
+            if (!sentence || sentence.length < 2) {
+                return retryCount < 3 ? generateResponse(seedText, retryCount + 1) : "...huh.";
+            }
+
+            // Anti-Copy Logic: If response is identical to input or a large chunk of it, try again
+            const cleanInput = seedText.toLowerCase().trim();
+            const cleanOutput = sentence.toLowerCase().trim();
+            
+            if (retryCount < 5 && (cleanInput.includes(cleanOutput) || cleanOutput.includes(cleanInput)) && cleanOutput.length > 3) {
+                return generateResponse(seedText, retryCount + 1);
+            }
+
+            if (isDeep && Math.random() < 0.3) sentence = sentence.replace(/\s/g, (m) => Math.random() < 0.15 ? '... ' : ' ');
+            const endings = isDeep ? ['.', '!!!', '...?', '??', '?!', '...', ' - wait.'] : ['.', '...', '!', '?'];
+            return sentence.charAt(0).toUpperCase() + sentence.slice(1) + endings[Math.floor(Math.random() * endings.length)];
+        }
+
+        // Stats updates are expensive, debounce them
+        let densityTimeout = null;
+        function updateBrainDensityDebounced() {
+            if (densityTimeout) clearTimeout(densityTimeout);
+            densityTimeout = setTimeout(() => {
+                updateBrainDensity();
+                densityTimeout = null;
+            }, 1000);
+        }
+
+        function updateComboUI() {
+            const comboEl = document.getElementById('combo-display');
+            if (!comboEl) return;
+            comboEl.innerText = `X${gameCombo}`;
+            comboEl.style.opacity = gameCombo > 1 ? "1" : "0";
+            comboEl.style.transform = `scale(${1 + (gameCombo * 0.1)}) rotate(${gameCombo}deg)`;
+        }
+
+        function spawnInkDrip(x, y) {
+            const drip = document.createElement('div');
+            drip.className = "absolute bg-blue-900/40 rounded-full blur-md pointer-events-none";
+            drip.style.width = "20px";
+            drip.style.height = "20px";
+            drip.style.left = x + "px";
+            drip.style.top = y + "px";
+            gameArena.appendChild(drip);
+            
+            drip.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(4) translate(0, 50px)' }], { duration: 1000, easing: 'ease-out' }).onfinish = () => drip.remove();
+        }
+
+        // --- Brain Visualization ---
+        function updateBrainDensity() {
+            const keys = Object.keys(markovModel).length;
+            const bar = document.getElementById('density-bar');
+            const percent = Math.min(100, Math.floor((keys / 1000) * 100));
+            bar.style.width = percent + '%';
+            const densityPercentEl = document.getElementById('stat-density-percent');
+            if (densityPercentEl) densityPercentEl.innerText = percent + '%';
+            updateLiveStats();
+        }
+
+        const mapCanvas = document.getElementById('neural-map');
+        const mctx = mapCanvas.getContext('2d');
+        let mapNodes = [];
+        let expandedNodes = [];
+        let isMapExpanded = false;
+
+        function openNeuralExplorer() {
+            isMapExpanded = true;
+            panX = 0;
+            panY = 0;
+            mapModal.classList.remove('hidden');
+            resizeExpandedCanvas();
+            // Pre-populate with more nodes for the big view
+            initNodes(expandedNodes, 80, expandedCanvas, true);
+            
+            // Center the view on the cluster
+            panX = expandedCanvas.width / 2;
+            panY = expandedCanvas.height / 2;
+            mapZoom = 1.0;
+        }
+
+        function closeNeuralExplorer() {
+            isMapExpanded = false;
+            mapModal.classList.add('hidden');
+        }
+
+        expandedCanvas.onwheel = (e) => {
+            if (!isMapExpanded) return;
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            mapZoom = Math.max(0.1, Math.min(5.0, mapZoom * delta));
+        };
+
+        function resizeExpandedCanvas() {
+            expandedCanvas.width = expandedCanvas.clientWidth;
+            expandedCanvas.height = expandedCanvas.clientHeight;
+        }
+
+        window.addEventListener('resize', () => {
+            if (isMapExpanded) resizeExpandedCanvas();
+        });
+
+        function animateNeuralMap() {
+            mctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const inkColor = isDark ? '#facc15' : '#000000';
+            const pencilColor = isDark ? '#a1a1aa' : '#52525b';
+            
+            mctx.lineWidth = 0.5;
+
+            // Occasionally pick a new set of words to visualize from the model
+            if (mapNodes.length === 0 || Math.random() < 0.01) {
+                const keys = Object.keys(markovModel);
+                mapNodes = [];
+                for(let i=0; i<Math.min(8, keys.length); i++) {
+                    initNodes(mapNodes, 8, mapCanvas, false);
+                }
+            }
+
+            drawMap(mctx, mapNodes, mapCanvas, inkColor, pencilColor, false);
+
+            if (isMapExpanded) {
+                ectx.clearRect(0, 0, expandedCanvas.width, expandedCanvas.height);
+                const isDarkExp = document.documentElement.classList.contains('dark');
+                drawMap(ectx, expandedNodes, expandedCanvas, isDarkExp ? "#facc15" : "#000000", isDarkExp ? "#ffffff" : "#000000", true);
+            }
+
+            requestAnimationFrame(animateNeuralMap);
+        }
+
+        function getSuccessors(key) {
+            const words = key.split(' ');
+            const targets = markovModel[key] || [];
+            return targets.map(t => words.length > 1 ? words[1] + " " + t : t).filter(k => markovModel[k]);
+        }
+
+        function initNodes(nodeArray, count, canvas, buildWeb = false) {
+            const keys = Object.keys(markovModel);
+            if (keys.length === 0) return;
+            
+            nodeArray.length = 0;
+            const currentSet = new Set();
+
+            if (buildWeb) {
+                let iterations = 0;
+                while(currentSet.size < count && iterations < 100) {
+                    let seed = keys[Math.floor(Math.random() * keys.length)];
+                    if (!currentSet.has(seed)) {
+                        currentSet.add(seed);
+                        getSuccessors(seed).forEach(s => { if(currentSet.size < count) currentSet.add(s); });
+                    }
+                    iterations++;
+                }
+            } else {
+                for(let i=0; i<Math.min(count, keys.length); i++) {
+                    currentSet.add(keys[Math.floor(Math.random() * keys.length)]);
+                }
+            }
+            
+            const selectedKeys = Array.from(currentSet);
+            selectedKeys.forEach(key => {
+                const range = buildWeb ? 2000 : canvas.width;
+                const offset = buildWeb ? 1000 : 0;
+
+                nodeArray.push({
+                    word: key,
+                    x: Math.random() * range - offset,
+                    y: Math.random() * range - offset,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    links: []
+                });
+            });
+
+            if (buildWeb) {
+                nodeArray.forEach((node, i) => {
+                    getSuccessors(node.word).forEach(s => {
+                        let targetIdx = nodeArray.findIndex(n => n.word === s);
+                        if (targetIdx !== -1 && targetIdx !== i) node.links.push(targetIdx);
+                    });
+                });
+            }
+        }
+
+        function drawMap(ctx, nodes, canvas, color, textColor, showLabels) {
+            ctx.save();
+            if (showLabels) ctx.translate(panX, panY);
+
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+
+            nodes.forEach((node, i) => {
+                node.x += node.vx;
+                node.y += node.vy;
+
+                const limit = showLabels ? 1000 : canvas.width;
+                if (node.x < (showLabels ? -limit : 0) || node.x > limit) node.vx *= -1;
+                if (node.y < (showLabels ? -limit : 0) || node.y > limit) node.vy *= -1;
+
+                // Only scale positions if labels are shown (the expanded Synaptic Explorer)
+                const drawX = showLabels ? node.x * mapZoom : node.x;
+                const drawY = showLabels ? node.y * mapZoom : node.y;
+
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, showLabels ? 4 : 2, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (showLabels) {
+                    ctx.save();
+                    ctx.fillStyle = textColor;
+                    ctx.font = '12px monospace'; // Font size remains constant
+                    ctx.shadowBlur = 4;
+                    ctx.shadowColor = 'black';
+                    ctx.fillText(node.word, drawX + 8, drawY + 4);
+                    ctx.restore();
+
+                    node.links.forEach(linkIdx => {
+                        const target = nodes[linkIdx];
+                        const targetDrawX = target.x * mapZoom;
+                        const targetDrawY = target.y * mapZoom;
+                        ctx.beginPath();
+                        ctx.moveTo(drawX, drawY);
+                        ctx.lineTo(targetDrawX, targetDrawY);
+                        ctx.strokeStyle = color;
+                        ctx.globalAlpha = 0.3;
+                        ctx.stroke();
+                        ctx.globalAlpha = 1.0;
+                    });
+                } else {
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        const other = nodes[j];
+                        const dist = Math.hypot(drawX - other.x, drawY - other.y);
+                        if (dist < 60) {
+                            ctx.globalAlpha = 1 - (dist / 60);
+                            ctx.beginPath();
+                            ctx.moveTo(drawX, drawY);
+                            ctx.lineTo(other.x, other.y);
+                            ctx.stroke();
+                            ctx.globalAlpha = 1;
+                        }
+                    }
+                }
+            });
+            ctx.restore();
+        }
+
+        // --- Rendering ---
+        function renderSidebar() {
+            chatList.innerHTML = '';
+            chats.forEach(chat => {
+                const item = document.createElement('div');
+                item.className = `sidebar-item p-3 text-sm flex justify-between items-center ${chat.id === currentChatId ? 'active-chat font-bold' : ''}`;
+                item.innerHTML = `
+                    <div class="flex-1 truncate" onclick="switchChat('${chat.id}')">
+                        <div class="truncate">${chat.title}</div>
+                        <div class="text-[10px] opacity-50">${new Date(parseInt(chat.id.split('_')[1])).toLocaleDateString()}</div>
+                    </div>
+                    <button class="ml-2 text-gray-400 hover:text-red-500 p-1 text-xl leading-none" onclick="deleteChat('${chat.id}', event)">
+                        &times;
+                    </button>
+                `;
+                chatList.appendChild(item);
+            });
+        }
+
+        function renderChat() {
+            const chat = chats.find(c => c.id === currentChatId);
+            chatContainer.innerHTML = '';
+            if (!chat) return;
+
+            if (chat.messages.length === 0) {
+                const suggestions = document.createElement('div');
+                suggestions.id = 'starter-suggestions';
+                suggestions.className = 'flex flex-col items-center justify-center p-6 text-center space-y-3 my-auto animate-in fade-in duration-300';
+                suggestions.innerHTML = `
+                    <div class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400">Teach the AS its first concepts:</div>
+                    <div class="flex flex-wrap gap-2 justify-center max-w-md">
+                        <button onclick="sendPrompt('The moon is secretly made of cheese')" class="suggestion-pill">"The moon is secretly made of cheese"</button>
+                        <button onclick="sendPrompt('What do ducks think about all day?')" class="suggestion-pill">"What do ducks think about all day?"</button>
+                        <button onclick="sendPrompt('Robots and cats will rule the universe')" class="suggestion-pill">"Robots and cats will rule the universe"</button>
+                    </div>
+                `;
+                chatContainer.appendChild(suggestions);
+            } else {
+                chat.messages.forEach(msg => {
+                    const div = document.createElement('div');
+                    div.className = `chat-bubble ${msg.sender === 'user' ? 'user-bubble' : 'ai-bubble'}`;
+                    const badge = msg.sender === 'user' 
+                        ? '<div class="text-[10px] font-black uppercase tracking-wider mb-0.5 opacity-60">[YOU]</div>' 
+                        : '<div class="text-[10px] font-black uppercase tracking-wider mb-0.5 opacity-60">[AS]</div>';
+                    div.innerHTML = badge + `<div class="break-words">${escapeHtml(msg.text)}</div>`;
+                    chatContainer.appendChild(div);
+                });
+            }
+            requestAnimationFrame(() => chatContainer.scrollTop = chatContainer.scrollHeight);
+            updateLiveStats();
+        }
+
+        function appendMessage(sender, text) {
+            const suggestions = document.getElementById('starter-suggestions');
+            if (suggestions) suggestions.remove();
+
+            const div = document.createElement('div');
+            div.className = `chat-bubble ${sender === 'user' ? 'user-bubble' : 'ai-bubble'} animate-in fade-in slide-in-from-bottom-2 duration-300`;
+            const badge = sender === 'user' 
+                ? '<div class="text-[10px] font-black uppercase tracking-wider mb-0.5 opacity-60">[YOU]</div>' 
+                : '<div class="text-[10px] font-black uppercase tracking-wider mb-0.5 opacity-60">[AS]</div>';
+            div.innerHTML = badge + `<div class="break-words">${escapeHtml(text)}</div>`;
+            chatContainer.appendChild(div);
+            
+            chatContainer.appendChild(typingIndicator);
+            
+            requestAnimationFrame(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
+            updateLiveStats();
+        }
+
+        // --- The "Logic" ---
+        function getAIResponse(input) {
+            // Populate inventory only from the first 10 messages
+            if (userMessageCount <= 10) {
+                const words = input.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+                words.forEach(w => neuralInventory.add(w));
+                renderNeuralInventory();
+                debouncedSave();
+            }
+
+            trainAI(input); // Learn from user
+
+            // Update chat title if it's the first real message
+            const currentChat = chats.find(c => c.id === currentChatId);
+            if (currentChat && currentChat.title === 'New Scribble' && currentChat.messages.length < 4) {
+                currentChat.title = input.substring(0, 15) + (input.length > 15 ? '...' : '');
+                renderSidebar();
+            }
+
+            
+
+            // Pure Generative response based on "Thinking"
+            return generateResponse(input);
+        }
+
+        // --- Events ---
+        chatForm.onsubmit = (e) => {
+            e.preventDefault();
+            const val = userInput.value.trim();
+            if (!val) return;
+            
+            userInput.value = ''; // Clear immediately to allow rapid typing
+
+            const chat = chats.find(c => c.id === currentChatId);
+            if (!chat) {
+                console.error("Chat synchronization error. Resetting view.");
+                switchChat(chats[0]?.id);
+                return;
+            }
+            chat.messages.push({ sender: 'user', text: val });
+            appendMessage('user', val);
+            
+            userMessageCount++;
+            debouncedSave();
+
+            pendingAIResponses++;
+            typingIndicator.innerText = settings.responseSpeed > 10 ? "* Chewing on the pencil harder... *" : "* Chewing on a pencil... *";
+            typingIndicator.classList.remove('hidden');
+            
+            // Enforce a minimum delay and add slight jitter to prevent race conditions at high speeds
+            const delay = Math.max(450, settings.responseSpeed * 1000) + (Math.random() * 200);
+
+            setTimeout(() => {
+                pendingAIResponses--;
+                if (pendingAIResponses <= 0) {
+                    typingIndicator.classList.add('hidden');
+                    pendingAIResponses = 0;
+                }
+                
+                const reply = getAIResponse(val);
+                chat.messages.push({ sender: 'ai', text: reply });
+                appendMessage('ai', reply);
+                debouncedSave();
+            }, delay);
+        };
+
+        function switchView(view) {
+            const chatView = document.getElementById('chat-view');
+            const gameView = document.getElementById('game-view');
+            const thinkView = document.getElementById('think-view');
+            const vsView = document.getElementById('vs-view');
+            
+            const navChat = document.getElementById('nav-chat');
+            const navGame = document.getElementById('nav-game');
+            const navThink = document.getElementById('nav-think');
+            const navVs = document.getElementById('nav-vs');
+
+            // Reset states
+            chatView.style.display = 'none';
+            gameView.style.display = 'none';
+            thinkView.style.display = 'none';
+            if (vsView) vsView.style.display = 'none';
+            
+            navChat.classList.remove('active');
+            navGame.classList.remove('active');
+            navThink.classList.remove('active');
+            if (navVs) navVs.classList.remove('active');
+            
+            isThinkViewActive = false;
+
+            if (view === 'chat') {
+                chatView.style.display = 'flex';
+                navChat.classList.add('active');
+            } else if (view === 'think') {
+                thinkView.style.display = 'flex';
+                navThink.classList.add('active');
+                isThinkViewActive = true;
+            } else if (view === 'game') {
+                gameView.style.display = 'flex';
+                navGame.classList.add('active');
+            } else if (view === 'vs') {
+                if (vsView) vsView.style.display = 'flex';
+                if (navVs) navVs.classList.add('active');
+                initVsViewDefaults();
+            }
+        }
+
+        function toggleBrainstorming() {
+            isBrainstorming = !isBrainstorming;
+            const btn = document.getElementById('start-thinking-btn');
+            btn.innerText = isBrainstorming ? "STOP THINKING" : "START TO THINK";
+            btn.classList.toggle('bg-red-500', !isBrainstorming);
+            document.getElementById('game-overlay').style.display = isBrainstorming ? 'none' : 'flex';
+            
+            if(!isBrainstorming) {
+                gameNodes.forEach(n => n.el.remove());
+                gameNodes = [];
+            }
+            btn.classList.toggle('bg-gray-600', isBrainstorming);
+        }
+
+        function toggleThinkViewThinking() {
+            isThinkingManual = !isThinkingManual;
+            const btn = document.getElementById('think-view-toggle-btn');
+            btn.innerText = isThinkingManual ? "STOP THINKING" : "START TO THINK";
+            btn.classList.toggle('bg-red-500', !isThinkingManual);
+            btn.classList.toggle('bg-gray-600', isThinkingManual);
+        }
+
+
+        newChatBtn.onclick = createNewChat;
+        init();
+    </script>
+</body>
+</html>

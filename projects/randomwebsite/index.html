@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>take me to a random website</title>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col font-mono selection:bg-yellow-200 transition-colors duration-150">
+
+    <!-- Top Navigation -->
+    <header class="w-full flex items-center justify-between p-4 border-b-4 border-black dark:border-white bg-white dark:bg-zinc-800 shadow-[0_4px_0_0_rgba(0,0,0,1)] dark:shadow-[0_4px_0_0_rgba(255,255,255,1)]">
+        <a href="../../index.html" class="border-2 border-black dark:border-white bg-yellow-300 dark:bg-yellow-400 text-black px-3 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-400 transition-all">← HOME</a>
+        <button id="themeToggle" onclick="toggleTheme()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-200 dark:hover:bg-zinc-700 transition-all">THEME</button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center justify-center p-6">
+        <h1 class="text-2xl md:text-4xl font-black mb-8 uppercase tracking-tight text-center">take me to a random website</h1>
+
+        <div class="space-y-4 w-full max-w-xs">
+            <!-- Useful Button -->
+            <button onclick="goTo('useful')" class="w-full p-4 border-4 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-green-200 dark:hover:bg-green-900/50 active:bg-green-400 font-bold text-xl uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] transition-all active:translate-x-0.5 active:translate-y-0.5">
+                Useful site
+            </button>
+
+            <!-- Useless Button -->
+            <button onclick="goTo('useless')" class="w-full p-4 border-4 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white hover:bg-red-200 dark:hover:bg-red-900/50 active:bg-red-400 font-bold text-xl uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] transition-all active:translate-x-0.5 active:translate-y-0.5">
+                Useless site
+            </button>
+        </div>
+
+        <p class="mt-12 text-sm text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">just click a button.</p>
+    </main>
+
+    <script>
+        // --- Theme Management ---
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            localStorage.setItem('beep_theme', isDark ? 'dark' : 'light');
+        }
+        function toggleTheme() {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+        }
+        // Initialize Theme from localStorage or system preference
+        const savedTheme = localStorage.getItem('beep_theme');
+        if (savedTheme !== 'light') {
+            applyTheme(true);
+        } else {
+            applyTheme(false);
+        }
+
+        /**
+         * EDIT YOUR LINKS HERE
+         */
+        const USEFUL_SITES = [
+            "../../index.html"
+        ];
+
+        const USELESS_SITES = [
+            "https://longdogechallenge.com",
+            "https://pointerpointer.com",
+            "https://alwaysjudgeabookbyitscover.com",
+            "https://optical.toys",
+            "https://puginarug.com",
+            "https://mondrianandme.com",
+            "https://checkbox.toys/scale/",
+            "https://binarypiano.com",
+            "https://www.staggeringbeauty.com",
+            "https://www.hackertyper.net",
+            "https://fallingfalling.com",
+            "https://maze.toys/mazes/mini/daily/",
+            "https://cruel.toys/maze/",
+            "https://heeeeeeeey.com",
+            "https://floatingqrcode.com",
+            "https://www.zoomquilt.org",
+            "https://cant-not-tweet-this.com",
+            "https://ant.toys",
+            "https://cursoreffects.com",
+            "https://thatsthefinger.com",
+            "https://smashthewalls.com",
+            "https://burymewithmymoney.com",
+            "https://paint.toys/sand/",
+            "https://duckstreet.net",
+            "https://trypap.com",
+            "http://internetometer.com/give/51679"
+        ];
+
+        function goTo(type) {
+            const list = type === 'useful' ? USEFUL_SITES : USELESS_SITES;
+            const randomSite = list[Math.floor(Math.random() * list.length)];
+            window.open(randomSite, '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeepSmol | Projects </title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1a1a2e;
+            --panel-bg: #2d3436;
+            --text-main: #f1f5f9;
+            --purple-accent: #a29bfe;
+            --yellow-accent: #facc15;
+            --indie-border: 1px solid #000;
+        }
+
+        body {
+            font-family: sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            border: ridge rgb(175, 148, 29) 20px;
+            background-image: url('placeholder.png');
+            background-repeat: repeat; /* This is the default, but ensures tiling */
+            background-size: 100px 100px; /* Adjust this to control the size of each grid square */
+        }
+
+        /* --- Minesweeper Background Layer --- */
+        #minesweeper-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: grid;
+            opacity: 0.5;
+            pointer-events: auto;
+            justify-content: center;
+            align-content: start;
+        }
+
+        .mine-cell {
+            width: 40px;
+            height: 40px;
+            background: var(--purple-accent);
+            border-top: 3px solid rgba(255,255,255,0.4);
+            border-left: 3px solid rgba(255,255,255,0.4);
+            border-bottom: 3px solid rgba(0,0,0,0.4);
+            border-right: 3px solid rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+            cursor: pointer;
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        .mine-cell:hover { background: var(--yellow-accent); }
+        .mine-cell.revealed { background: rgba(0,0,0,0.2); border: 1px solid var(--purple-accent); cursor: default; }
+        .mine-cell.mine { background: red; }
+
+        /* --- Main Layout --- */
+        .site-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+            pointer-events: none; 
+        }
+
+        .site-container > * {
+            pointer-events: auto;
+        }
+
+        .content-box {
+            background: var(--panel-bg);
+            border: var(--indie-border);
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        }
+
+        .box-title {
+            background: var(--purple-accent);
+            color: #1a1a2e;
+            padding: 2px 15px;
+            font-family: sans-serif;
+            font-size: 1.5rem;
+            display: inline-block;
+            margin-top: -18px;
+            margin-left: 15px;
+            border: var(--indie-border);
+            font-weight: bold;
+        }
+
+        .box-body { padding: 25px; }
+
+        /* Game Cards */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .game-card {
+            background: #1a1a2e;
+            border: 3px solid #000;
+            padding: 15px;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .game-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 5px 5px 0px #000;
+        }
+
+        .game-thumb-container {
+            width: 100%;
+            height: 180px;
+            background: #000;
+            border: 2px solid #000;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .game-card:hover .game-thumb {
+            transform: scale(1.05);
+        }
+
+        .os-tag {
+            background: rgba(255,255,255,0.1);
+            color: var(--yellow-accent);
+            padding: 2px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #000;
+        }
+
+        .platform-icon {
+            font-size: 14px;
+            color: var(--purple-accent);
+            margin-right: 8px;
+        }
+
+        .btn-play {
+            margin-top: auto;
+            background: var(--yellow-accent);
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            text-transform: uppercase;
+            font-family: sans-serif;
+            font-size: 1.2rem;
+            transition: all 0.1s;
+        }
+
+        .game-card:hover .btn-play {
+            background: white;
+        }
+
+        footer {
+            margin: 50px 0;
+            text-align: center;
+            font-family: sans-serif;
+            color: var(--yellow-accent);
+            background: #000;
+            padding: 10px 20px;
+            border: 2px solid var(--purple-accent);
+            display: block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h3 { color: white; font-weight: bold; font-size: 1.25rem; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+  <style>
+    :root {
+        --bg-dark: #1a1a2e;
+        --panel-dark: #2d3436;
+        --purple-accent: #a29bfe;
+        --yellow-accent: #facc15;
+        --indie-border: 1px solid #000;
+    }
+
+    .nav-wrapper {
+        background: var(--bg-dark);
+        border-bottom: var(--indie-border);
+        padding: 15px 10px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        text-align: center;
+    }
+
+    .nav-title {
+        font-family: sans-serif;
+        font-size: 2.8rem;
+        color: var(--yellow-accent);
+        text-shadow: 3px 3px 0px #000;
+        margin-bottom: 12px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .nav-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .nav-links a {
+        background: var(--purple-accent);
+        color: #1a1a2e;
+        border: 2px solid #000;
+        padding: 6px 16px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1.2rem;
+        box-shadow: 3px 3px 0px #000;
+        transition: all 0.1s;
+        text-transform: uppercase;
+    }
+
+    .nav-links a:hover {
+        background: var(--yellow-accent);
+        transform: translate(-2px, -2px);
+        box-shadow: 5px 5px 0px #000;
+    }
+
+    .nav-links a:active {
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0px #000;
+    }
+</style>
+
+<div class="nav-wrapper">
+    <a href="../index.html" class="nav-title">BEEPSMOL.COM</a>
+    <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="index.html">Projects</a>
+        <a href="../music/index.html">Music</a>
+        <a href="../index.html">[Coming Soon]</a>
+      </div>
+</div>
+
+    <div class="site-container">
+        <div class="content-box">
+            <span class="box-title">PROJECTS</span>
+            <div class="box-body">
+                <p class="mb-8 text-gray-300 italic font-medium">Click on a project to view details or play in-browser.</p>
+                
+                <div id="game-grid" class="game-grid">
+                    <!-- Games injected here -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>BEEPSMOL &copy; 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- Updated Game Data Structure ---
+        const games = [
+          {
+                title: "GARNDIN",
+                image: "placeholder.png",
+                url: "garndin/index.html",
+                isMobile: false,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser", "Requires MOUSE"]
+            },
+            {
+                title: "Simple HTML physics engine, very buggy.",
+                image: "physengine/physicsthumbnail.png",
+                url: "physengine/index.html",
+                isMobile: false,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser", "Requires KEYBOARD", "Requires MOUSE"]
+            },
+            {
+                title: "The Time Waster",
+                image: "timewaster/timewastinglogo.png",
+                url: "timewaster/index.html",
+                isMobile: true,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+            {
+                title: "Artificial Stupidity",
+                image: "artificialunintelligence/dummy.png",
+                url: "artificialunintelligence/index.html",
+                isMobile: true,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+                        {
+                title: "Reverse Infinite Craft",
+                image: "reverseinfinitecraft/crafty.png",
+                url: "reverseinfinitecraft/index.html",
+                isMobile: true,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+            {
+                title: "UTDRdle",
+                image: "utdrdle/utdrdlethumb.png",
+                url: "utdrdle/index.html",
+                isMobile: true,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+             {
+                title: "Beepdle",
+                image: "beepdle/beepdle.png",
+                url: "beepdle/index.html",
+                isMobile: false,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+            {
+                title: "Rabbit Hole Generator",
+                image: "putmethrougharabbithole/rabbithole.png",
+                url: "putmethrougharabbithole/index.html",
+                isMobile: true,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+            {
+                title: "Take Me To A Random Website",
+                image: "randomwebsite/randomwebsite.png",
+                url: "randomwebsite/index.html",
+                isMobile: true,
+                isPC: true,
+                needsDownload: false,
+                os: ["Web Browser"]
+            },
+                        {
+                title: "COMING SOON",
+                image: "placeholder.png",
+                url: "#COMING SOON",
+                isMobile: false,
+                isPC: true,
+                needsDownload: true,
+                os: ["Web Browser", "Windows", "Linux", "MacOS"]
+            }
+        ];
+
+        function renderGames() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = games.map(game => {
+                // Determine icon logic based on properties
+                let platformIcons = "";
+                if(game.isMobile) platformIcons += `<i class="fas fa-mobile-alt platform-icon" title="Mobile Support"></i>`;
+                if(game.isPC) platformIcons += `<i class="fas fa-desktop platform-icon" title="PC Support"></i>`;
+                if(game.needsDownload) platformIcons += `<i class="fas fa-download platform-icon text-yellow-400" title="Download Required"></i>`;
+
+                return `
+                    <div class="game-card" onclick="if(!'${game.url}'.startsWith('#')) window.open('${game.url}', '_blank')">
+                        <div class="game-thumb-container">
+                            <img src="${game.image}" 
+                                 onerror="this.src='https://via.placeholder.com/600/400/000/facc15?text=${game.title}'" 
+                                 alt="${game.title}" class="game-thumb">
+                        </div>
+                        <div class="flex items-center mb-3">
+                            ${platformIcons}
+                            <div class="flex flex-wrap gap-1">
+                                ${game.os.map(os => `<span class="os-tag">${os}</span>`).join('')}
+                            </div>
+                        </div>
+                        <h3>${game.title}</h3>
+                        <div class="btn-play">${game.needsDownload ? 'Download' : 'Open'}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.onload = () => {
+            renderGames();
+        };
+    </script>
+    <script data-goatcounter="https://beepsmol.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

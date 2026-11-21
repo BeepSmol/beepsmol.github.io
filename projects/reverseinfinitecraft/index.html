@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Infinite Craft</title>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .element-badge {
+            background: white;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            padding: 6px 12px;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s ease;
+            color: #000;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .element-badge:hover {
+            background: #fef08a; /* yellow-200 */
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+
+        .element-badge:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
+        }
+
+        .element-badge-large {
+            padding: 10px 18px;
+            font-size: 18px;
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+
+        /* Subtle shake animation for empty inputs */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3f4f6; 
+            border-left: 2px solid #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #000; 
+        }
+
+        /* Crafting Arena Styles */
+        .craft-node {
+            position: absolute;
+            cursor: grab;
+            z-index: 20;
+            border: 2px solid #000;
+            background: white;
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+            transition: transform 0.05s;
+        }
+        .craft-node:active { 
+            cursor: grabbing; 
+            transform: scale(1.05); 
+            box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
+        }
+        
+        #craft-arena {
+            background-color: #ffffff;
+            background-image: radial-gradient(#000000 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        
+        .mode-tab {
+            padding: 6px 16px;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            border: 2px solid #000;
+            background: white;
+            box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        .mode-tab:hover {
+            background: #fef08a;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        }
+        .mode-tab:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px rgba(0,0,0,1);
+        }
+        .mode-tab.active {
+            background: #000;
+            color: white;
+        }
+
+        #toast {
+            transform: translateX(-50%) translateY(120px);
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #toast.show { 
+            transform: translateX(-50%) translateY(0); 
+        }
+    
+        /* Dark Mode Specific Overrides */
+        .dark body, body.dark {
+            background-color: #18181b;
+            color: #f4f4f5;
+        }
+
+        .dark .element-badge {
+            background: #27272a;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
+        }
+
+        .dark .element-badge:hover {
+            background: #3f3f46;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .dark .element-badge-large {
+            border-color: #ffffff;
+            box-shadow: 4px 4px 0px 0px rgba(255,255,255,1);
+        }
+
+        .dark #craft-arena {
+            background-color: #18181b;
+            background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
+        }
+
+        .dark .craft-node {
+            background: #27272a;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .dark .mode-tab {
+            background: #27272a;
+            border-color: #ffffff;
+            color: #ffffff;
+            box-shadow: 2px 2px 0px 0px rgba(255,255,255,1);
+        }
+
+        .dark .mode-tab:hover {
+            background: #3f3f46;
+            box-shadow: 3px 3px 0px 0px rgba(255,255,255,1);
+        }
+
+        .dark .mode-tab.active {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .dark ::-webkit-scrollbar-track {
+            background: #18181b;
+            border-left: 2px solid #ffffff;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #ffffff;
+        }
+
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden text-gray-900 bg-gray-100 font-mono selection:bg-yellow-200 dark:bg-zinc-900 dark:text-zinc-100 transition-colors duration-150">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 z-[100] bg-black text-white px-6 py-3 border-4 border-black font-bold uppercase shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] pointer-events-none text-sm">
+        You haven't discovered this combination yet!
+    </div>
+
+    <!-- Main Action Area -->
+    <main class="flex-1 flex flex-col relative h-[60vh] md:h-screen border-b-4 md:border-b-0 md:border-r-4 border-black dark:border-white z-10 bg-gray-100 dark:bg-zinc-900">
+        
+        <!-- Header -->
+        <header class="p-4 md:p-6 border-b-4 border-black dark:border-white bg-white dark:bg-zinc-800 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-[0_4px_0_0_rgba(0,0,0,1)] dark:shadow-[0_4px_0_0_rgba(255,255,255,1)]">
+            <div class="flex flex-col items-center sm:items-start">
+                <div class="flex items-center gap-3">
+                    <a href="../../index.html" class="border-2 border-black dark:border-white bg-yellow-300 dark:bg-yellow-400 text-black px-3 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-400 transition-all">← HOME</a>
+                    <h1 class="text-2xl md:text-3xl font-black tracking-tight uppercase text-black dark:text-white">Reverse Infinite Craft</h1>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <div id="tab-teacher" class="mode-tab active" onclick="switchMode('teacher')">LARP</div>
+                    <div id="tab-player" class="mode-tab" onclick="switchMode('player')">Test</div>
+                </div>
+            </div>
+            <div class="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-2">
+
+                <div class="flex items-center gap-2">
+                    <button id="themeToggle" onclick="toggleTheme()" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white px-3 py-1 font-bold text-xs uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:bg-yellow-200 dark:hover:bg-zinc-700 transition-all">THEME</button>
+                    <button onclick="resetProgress()" class="p-2 border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-red-200 dark:hover:bg-red-900/60 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] font-bold transition-all hover:-translate-y-0.5 active:translate-y-0" title="Reset Progress">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Crafting Station -->
+        <div id="teacher-view" class="flex-1 flex flex-col items-center justify-center p-4 w-full max-w-3xl mx-auto overflow-y-auto">
+            <div class="mb-4 text-center">
+                <p class="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase">The user asks for a combination. You decide what they make.</p>
+            </div>
+            
+            <div class="bg-white dark:bg-zinc-800 p-6 md:p-8 border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] w-full flex flex-col items-center">
+                <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-6">Current Request</div>
+                
+                <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-gray-900 dark:text-gray-100 text-lg sm:text-xl font-bold w-full">
+                    <div id="element-a" class="element-badge element-badge-large">
+                        <!-- Populated by JS -->
+                    </div>
+                    <span>+</span>
+                    <div id="element-b" class="element-badge element-badge-large">
+                        <!-- Populated by JS -->
+                    </div>
+                    <span>=</span>
+                    
+                    <form id="craft-form" class="flex flex-wrap sm:flex-nowrap justify-center gap-2 relative w-full sm:w-auto mt-4 sm:mt-0">
+                        <!-- Emoji Selector -->
+                        <div class="relative">
+                            <button type="button" id="emoji-picker-btn" 
+                                class="border-4 border-black bg-white p-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-yellow-200 focus:outline-none transition-all text-xl w-16 text-center font-bold" title="Choose an emoji">
+                                😀
+                            </button>
+                            <input type="hidden" id="selected-emoji" value="">
+                            <div id="emoji-dropdown" class="hidden absolute bottom-full mb-2 left-0 w-64 max-h-48 overflow-y-auto bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-2 grid grid-cols-6 gap-1 z-50">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <input type="text" id="result-input" autocomplete="off" placeholder="Type output..." 
+                            class="border-4 border-black bg-white px-4 py-3 font-bold uppercase tracking-tight focus:outline-none focus:bg-yellow-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-lg w-full sm:w-64 placeholder:text-gray-400 placeholder:normal-case">
+                        <button type="submit" class="border-4 border-black bg-black text-white hover:bg-yellow-200 hover:text-black px-6 py-3 font-bold uppercase text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all active:translate-y-0.5 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            Save
+                        </button>
+                    </form>
+                </div>
+
+                <div class="mt-6 flex gap-3 w-full justify-center">
+                    <button id="skip-btn" class="border-2 border-black dark:border-white bg-white dark:bg-zinc-900 text-black dark:text-white hover:bg-red-200 dark:hover:bg-red-900/50 px-4 py-1.5 font-bold uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] transition-all">
+                        Skip this request
+                    </button>
+                </div>
+            </div>
+
+            <!-- History Log -->
+            <div class="mt-8 w-full max-w-2xl flex flex-col items-center border-4 border-black dark:border-white bg-white dark:bg-zinc-800 text-black dark:text-white p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]">
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 border-b-2 border-black dark:border-white pb-1 w-full text-center text-gray-500 dark:text-gray-400">Recent Outputs</div>
+                <div id="history-container" class="flex flex-col gap-2 w-full max-h-48 overflow-y-auto px-2 pb-2 items-center">
+                                        <div class="text-gray-400 text-sm font-bold uppercase" id="empty-history">Waiting for your first generation...</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Standard Player Mode Arena -->
+        <div id="player-view" class="hidden flex-1 relative overflow-hidden" ondragover="event.preventDefault()" ondrop="handleDrop(event)">
+            <div id="craft-arena" class="absolute inset-0 cursor-crosshair">
+                            </div>
+        </div>
+    </main>
+
+    <!-- Sidebar / Inventory -->
+    <aside class="w-full md:w-80 lg:w-96 bg-white dark:bg-zinc-900 border-t-4 md:border-t-0 md:border-l-4 border-black dark:border-white h-[40vh] md:h-screen overflow-y-auto p-6 shadow-[-4px_0px_0px_0px_rgba(0,0,0,0.05)] text-black dark:text-white">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b-4 border-black dark:border-white sticky top-0 bg-white dark:bg-zinc-900 z-10">
+            <h2 class="text-xl font-bold uppercase tracking-tight">Discovered</h2>
+            <span id="discovery-count" class="text-xs font-bold uppercase border-2 border-black bg-yellow-200 px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">4 items</span>
+        </div>
+        
+        <div id="inventory-grid" class="flex flex-wrap gap-2">
+                    </div>
+    </aside>
+
+    <script>
+        
+        // --- Theme Management ---
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            localStorage.setItem('beep_theme', isDark ? 'dark' : 'light');
+        }
+        function toggleTheme() {
+            const isDark = !document.documentElement.classList.contains('dark');
+            applyTheme(isDark);
+        }
+        const savedTheme = localStorage.getItem('beep_theme');
+        if (savedTheme !== 'light') {
+            applyTheme(true);
+        } else {
+            applyTheme(false);
+        }
+
+        // --- State ---
+        const initialElements = [
+            { name: 'Water', emoji: '💧' },
+            { name: 'Fire', emoji: '🔥' },
+            { name: 'Wind', emoji: '🌬️' },
+            { name: 'Earth', emoji: '🌍' }
+        ];
+
+        let currentMode = 'teacher';
+        let elements = JSON.parse(localStorage.getItem('reverse-craft-elements')) || [...initialElements];
+        let historyLog = JSON.parse(localStorage.getItem('reverse-craft-history')) || [];
+        let recipes = JSON.parse(localStorage.getItem('reverse-craft-recipes')) || {}; 
+        let currentA = null; 
+        let currentB = null;
+
+        // A massive list of generic, fun emojis to assign to new words based on a simple hash
+        const autoEmojis = ['✨','🌟','💫','⭐','🔥','💧','🌬️','🌍','☀️','🌙','⚡','❄️','🌈','🌪️','☄️','💥','🌊','🍎','🍔','🍕','🌮','🍦','🍩','🍺','☕','🍄','🥦','🍇','🍉','🥑','🥩','🥞','🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','🐯','🦁','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🐤','🦆','🦅','🦉','🦇','🐺','🐗','🐴','🦄','🐝','🐛','🦋','🐌','🐞','🐜','🦟','🦗','🕷️','🦂','🐢','🐍','🦎','🦖','🦕','🐙','🦑','🦐','🦞','🦀','🐡','🐠','🐟','🐬','🐳','🐋','🦈','🐊','🐅','🐆','🦓','🦍','🦧','🐘','🦛','🦏','🐪','🐫','🦒','🦘','🐃','🐂','🐄','🐎','🐖','🐏','🐑','🦙','🐐','🦌','🐕','🐩','🦮','🐕‍🦺','🐈','🐈‍⬛','🐓','🦃','🦚','🦜','🦢','🦩','🕊️','🐇','🦝','🦨','🦡','🦦','🦥','🐁','🐀','🐿️','🦔','🚗','🚕','🚙','🚌','🚎','🏎️','🚓','🚑','🚒','🚐','🚚','🚛','🚜','🦯','🦽','🦼','🛴','🚲','🛵','🏍️','🛺','🚨','🚔','🚍','🚘','🚖','🚡','🚠','🚟','🚃','🚋','🚞','🚝','🚄','🚅','🚈','🚂','🚆','🚇','🚊','🚉','✈️','🛫','🛬','🛩️','💺','🛰️','🚀','🛸','🚁','🛶','⛵','🚤','🛥️','🛳️','⛴️','🚢','⚓','⛽','🚧','🚦','🚥','🚏','🗺️','🗿','🗽','🗼','🏰','🏯','🏟️','🎡','🎢','🎠','⛲','⛱️','🏖️','🏝️','🏜️','🌋','⛰️','🏔️','🗻','🏕️','⛺','🏠','🏡','🏘️','🏚️','🏗️','🏭','🏢','🏬','🏣','🏤','🏥','🏦','🏨','🏪','🏫','🏩','💒','🏛️','⛪','🕌','🕍','🛕','🕋','⛩️','🛤️','🛣️','🗾','🎑','🏞️','🌅','🌄','🌠','🎇','🎆','🌇','🌆','🏙️','🌃','🌌','🌉','🌁','⌚','📱','📲','💻','⌨️','🖥️','🖨️','🖱️','🖲️','🕹️','🗜️','💽','💾','💿','📀','📼','📷','📸','📹','🎥','📽️','🎞️','📞','☎️','📟','📠','📺','📻','🎙️','🎚️','🎛️','🧭','⏱️','⏲️','⏰','🕰️','⌛','⏳','📡','🔋','🔌','💡','🔦','🕯️','🪔','🧯','🛢️','💸','💵','💴','💶','💷','🪙','💰','💳','💎','⚖️','🧰','🔧','🔨','⚒️','🛠️','⛏️','🔩','⚙️','🧱','⛓️','🧲','🔫','💣','🧨','🪓','🔪','🗡️','⚔️','🛡️','🚬','⚰️','⚱️','🏺','🔮','📿','🧿','💈','⚗️','🔭','🔬','🕳️','🩹','🩺','💊','💉','🩸','🧬','🦠','🧫','🧪','🌡️','🧹','🧺','🧻','🚽','🚰','🚿','🛁','🛀','🧼','🪒','🧽','🧴','🛎️','🔑','🗝️','🚪','🪑','🛋️','🛏️','🛌','🧸','🪆','🖼️','🪞','🪟','🛍️','🛒','🎁','🎈','🎏','🎀','🪄','🪅','🎊','🎉'];
+
+        // --- DOM Elements ---
+        const elContainerA = document.getElementById('element-a');
+        const elContainerB = document.getElementById('element-b');
+        const teacherView = document.getElementById('teacher-view');
+        const playerView = document.getElementById('player-view');
+        const craftArena = document.getElementById('craft-arena');
+        const craftForm = document.getElementById('craft-form');
+        const emojiBtn = document.getElementById('emoji-picker-btn');
+        const emojiDropdown = document.getElementById('emoji-dropdown');
+        const selectedEmojiInput = document.getElementById('selected-emoji');
+        const resultInput = document.getElementById('result-input');
+        const skipBtn = document.getElementById('skip-btn');
+        const inventoryGrid = document.getElementById('inventory-grid');
+        const historyContainer = document.getElementById('history-container');
+        const emptyHistoryText = document.getElementById('empty-history');
+        const discoveryCount = document.getElementById('discovery-count');
+
+        function resetProgress() {
+            if (confirm("Are you sure you want to reset all progress? This will delete all discovered elements and recipes.")) {
+                localStorage.removeItem('reverse-craft-elements');
+                localStorage.removeItem('reverse-craft-history');
+                localStorage.removeItem('reverse-craft-recipes');
+                location.reload();
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('tab-teacher').classList.toggle('active', mode === 'teacher');
+            document.getElementById('tab-player').classList.toggle('active', mode === 'player');
+            
+            teacherView.classList.toggle('hidden', mode !== 'teacher');
+            playerView.classList.toggle('hidden', mode !== 'player');
+            
+            if (mode === 'player') {
+                renderInventory();
+            } else {
+                craftArena.innerHTML = '';
+            }
+        }
+
+        // --- Core Logic ---
+
+        // Initialize Emoji Picker
+        autoEmojis.forEach(emoji => {
+            const span = document.createElement('span');
+            span.className = 'cursor-pointer hover:bg-yellow-200 border border-black p-1 text-xl text-center flex items-center justify-center';
+            span.innerText = emoji;
+            span.onclick = () => {
+                selectedEmojiInput.value = emoji;
+                emojiBtn.innerText = emoji;
+                emojiDropdown.classList.add('hidden');
+            };
+            emojiDropdown.appendChild(span);
+        });
+
+        emojiBtn.onclick = (e) => {
+            e.stopPropagation();
+            emojiDropdown.classList.toggle('hidden');
+        };
+
+        document.addEventListener('click', () => emojiDropdown.classList.add('hidden'));
+
+        window.handleDrop = (e) => {
+            e.preventDefault();
+            const data = e.dataTransfer.getData('element');
+            if (!data || currentMode !== 'player') return;
+            const elData = JSON.parse(data);
+            const rect = craftArena.getBoundingClientRect();
+            spawnCraftNode(elData, e.clientX - rect.left - 60, e.clientY - rect.top - 20);
+        };
+
+        function showToast(message) {
+            const t = document.getElementById('toast');
+            t.innerText = message;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Simple hash function to consistently assign the same emoji to the same word
+        function getEmojiForWord(word) {
+            let hash = 0;
+            const str = word.toLowerCase();
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return autoEmojis[Math.abs(hash) % autoEmojis.length];
+        }
+
+        function getPairKey(a, b) {
+            return [a.name, b.name].sort().join('|');
+        }
+
+        function formatName(name) {
+            return name.trim().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+        }
+
+        function saveProgress() {
+            localStorage.setItem('reverse-craft-elements', JSON.stringify(elements));
+            localStorage.setItem('reverse-craft-history', JSON.stringify(historyLog));
+            localStorage.setItem('reverse-craft-recipes', JSON.stringify(recipes));
+        }
+
+        function pickNextPair() {
+            let foundNewPair = false;
+            
+            for (let i = 0; i < 100; i++) {
+                let a = elements[Math.floor(Math.random() * elements.length)];
+                let b = elements[Math.floor(Math.random() * elements.length)];
+                let key = getPairKey(a, b);
+                
+                if (!recipes[key]) {
+                    currentA = a;
+                    currentB = b;
+                    foundNewPair = true;
+                    break;
+                }
+            }
+
+            if (!foundNewPair) {
+                currentA = elements[Math.floor(Math.random() * elements.length)];
+                currentB = elements[Math.floor(Math.random() * elements.length)];
+            }
+
+            updateCraftingUI();
+        }
+
+        function handleCraft(e) {
+            e.preventDefault();
+            
+            const rawInput = resultInput.value;
+            if (!rawInput.trim()) {
+                resultInput.classList.add('shake');
+                setTimeout(() => resultInput.classList.remove('shake'), 300);
+                return;
+            }
+
+            const rawEmoji = selectedEmojiInput.value.trim();
+            const formattedName = formatName(rawInput);
+            
+            let existingElement = elements.find(el => el.name.toLowerCase() === formattedName.toLowerCase());
+            
+            let finalElement;
+            if (existingElement) {
+                finalElement = existingElement;
+            } else {
+                finalElement = {
+                    name: formattedName,
+                    emoji: rawEmoji || getEmojiForWord(formattedName)
+                };
+                elements.push(finalElement);
+            }
+
+            const recipeKey = getPairKey(currentA, currentB);
+            recipes[recipeKey] = finalElement;
+
+            addToHistory(currentA, currentB, finalElement);
+            saveProgress();
+
+            resultInput.value = '';
+            selectedEmojiInput.value = '';
+            emojiBtn.innerText = '😀';
+            renderInventory();
+            pickNextPair();
+            resultInput.focus();
+        }
+
+        // --- UI Rendering ---
+
+        function updateCraftingUI() {
+            elContainerA.innerHTML = `${currentA.emoji} ${currentA.name}`;
+            elContainerB.innerHTML = `${currentB.emoji} ${currentB.name}`;
+        }
+
+        // --- Player Mode Arena Logic ---
+        let draggedElement = null;
+        let nodes = [];
+
+        function spawnCraftNode(elData, x, y) {
+            const div = document.createElement('div');
+            div.className = 'element-badge craft-node';
+            div.innerHTML = `${elData.emoji} ${elData.name}`;
+            div.style.left = (x !== undefined ? x : Math.random() * (craftArena.clientWidth - 100)) + 'px';
+            div.style.top = (y !== undefined ? y : Math.random() * (craftArena.clientHeight - 50)) + 'px';
+            
+            const node = { el: div, data: elData };
+            
+            div.onmousedown = (e) => {
+                draggedElement = node;
+                div.style.zIndex = 1000;
+            };
+
+            craftArena.appendChild(div);
+            nodes.push(node);
+        }
+
+        playerView.addEventListener('mousemove', (e) => {
+            if (!draggedElement) return;
+            const rect = craftArena.getBoundingClientRect();
+            draggedElement.el.style.left = (e.clientX - rect.left - draggedElement.el.offsetWidth / 2) + 'px';
+            draggedElement.el.style.top = (e.clientY - rect.top - draggedElement.el.offsetHeight / 2) + 'px';
+        });
+
+        playerView.addEventListener('mouseup', (e) => {
+            if (!draggedElement) return;
+            
+            const cur = draggedElement;
+            const curRect = cur.el.getBoundingClientRect();
+            
+            const target = nodes.find(n => {
+                if (n === cur) return false;
+                const r = n.el.getBoundingClientRect();
+                return !(curRect.right < r.left || curRect.left > r.right || curRect.bottom < r.top || curRect.top > r.bottom);
+            });
+
+            if (target) {
+                const key = getPairKey(cur.data, target.data);
+                const result = recipes[key];
+                
+                if (result) {
+                    const spawnX = (parseFloat(cur.el.style.left) + parseFloat(target.el.style.left)) / 2;
+                    const spawnY = (parseFloat(cur.el.style.top) + parseFloat(target.el.style.top)) / 2;
+                    
+                    cur.el.remove();
+                    target.el.remove();
+                    nodes = nodes.filter(n => n !== cur && n !== target);
+                    
+                    spawnCraftNode(result, spawnX, spawnY);
+                } else {
+                    showToast(`The AI doesn't know what ${cur.data.name} + ${target.data.name} makes. Switch to LARP mode!`);
+                    cur.el.style.left = (parseFloat(cur.el.style.left) - 20) + 'px';
+                }
+            }
+
+            draggedElement.el.style.zIndex = 20;
+            draggedElement = null;
+        });
+
+        function renderInventory() {
+            inventoryGrid.innerHTML = '';
+            
+            const sortedElements = [...elements].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedElements.forEach(el => {
+                const badge = document.createElement('div');
+                badge.className = 'element-badge cursor-pointer';
+                badge.innerHTML = `${el.emoji} ${el.name}`;
+                
+                badge.onclick = () => {
+                    if (currentMode === 'player') {
+                        spawnCraftNode(el);
+                    }
+                };
+
+                badge.draggable = true;
+                badge.ondragstart = (e) => {
+                    if (currentMode !== 'player') {
+                        e.preventDefault();
+                        return;
+                    }
+                    e.dataTransfer.setData('element', JSON.stringify(el));
+                };
+
+                if (historyLog.length > 0 && historyLog[0].result.name === el.name) {
+                    badge.style.animation = "shake 0.3s ease-out";
+                }
+                inventoryGrid.appendChild(badge);
+            });
+
+            discoveryCount.innerText = `${elements.length} items`;
+        }
+
+        function addToHistory(a, b, result) {
+            historyLog.unshift({ a, b, result });
+            
+            if (historyLog.length > 20) {
+                historyLog.pop();
+            }
+
+            if (emptyHistoryText) {
+                emptyHistoryText.style.display = 'none';
+            }
+
+            renderHistory();
+        }
+
+        function renderHistory() {
+            historyContainer.innerHTML = '';
+            historyLog.forEach((entry, index) => {
+                const row = document.createElement('div');
+                const opacity = index === 0 ? '1' : index < 3 ? '0.85' : '0.6';
+                
+                row.className = 'flex flex-wrap items-center justify-center gap-2 transition-all duration-300 w-full';
+                row.style.opacity = opacity;
+                
+                row.innerHTML = `
+                    <span class="element-badge !py-1 !px-2 !text-xs">${entry.a.emoji} ${entry.a.name}</span>
+                    <span class="text-xs font-bold">+</span>
+                    <span class="element-badge !py-1 !px-2 !text-xs">${entry.b.emoji} ${entry.b.name}</span>
+                    <span class="text-xs font-bold">=</span>
+                    <span class="element-badge !py-1 !px-2 !text-xs ${index === 0 ? '!bg-yellow-200' : ''}">${entry.result.emoji} ${entry.result.name}</span>
+                `;
+                historyContainer.appendChild(row);
+            });
+        }
+
+        // --- Event Listeners & Init ---
+
+        craftForm.addEventListener('submit', handleCraft);
+        
+        skipBtn.addEventListener('click', () => {
+            pickNextPair();
+            resultInput.focus();
+        });
+
+        renderInventory();
+        if (historyLog.length > 0) {
+            if (emptyHistoryText) emptyHistoryText.style.display = 'none';
+            renderHistory();
+        }
+        
+        pickNextPair();
+        resultInput.focus();
+
+    </script>
+</body>
+</html>
