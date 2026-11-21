@@ -334,6 +334,78 @@
         transform: translate(1px, 1px);
         box-shadow: 1px 1px 0px #000;
     }
+
+        .nav-social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
+            transition: all 0.1s;
+            text-decoration: none;
+        }
+
+        .nav-social-btn.spotify {
+            background-color: #1DB954;
+            color: #000;
+        }
+
+        .nav-social-btn.spotify:hover {
+            background-color: #1ed760;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .nav-social-btn.youtube {
+            background-color: #FF0000;
+            color: #fff;
+        }
+
+        .nav-social-btn.youtube:hover {
+            background-color: #e60000;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        .nav-social-btn.discord {
+            background-color: #5865F2;
+            color: #fff;
+        }
+
+        .nav-social-btn.discord:hover {
+            background-color: #4752c4;
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0px #000;
+        }
+
+        /* --- Visualizer Containers --- */
+        #left-vis-container,
+        #right-vis-container {
+            width: 260px;
+            max-width: calc((100vw - 1040px) / 2);
+            box-sizing: border-box;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        @media (min-width: 1600px) {
+            #left-vis-container,
+            #right-vis-container {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 1100px) {
+            #left-vis-container,
+            #right-vis-container {
+                display: none !important;
+            }
+        }
+
 </style>
 
 <div class="nav-wrapper">
@@ -343,7 +415,18 @@
         <a href="../projects/index.html">Projects</a>
         <a href="index.html">Music</a>
         <a href="../index.html">[Coming Soon]</a>
-      </div>
+    </div>
+    <div class="flex justify-center items-center gap-2 sm:gap-3 mt-3 flex-wrap">
+        <a href="https://open.spotify.com/artist/6ShuZZRP7f1Ip5ykePQJa9?si=Rz_cWzdiTXWLGdI5kKSfaw" target="_blank" class="nav-social-btn spotify" title="Listen on Spotify">
+            <i class="fab fa-spotify text-base"></i> SPOTIFY
+        </a>
+        <a href="https://www.youtube.com/@beepmus" target="_blank" class="nav-social-btn youtube" title="Subscribe on YouTube">
+            <i class="fab fa-youtube text-base"></i> YOUTUBE
+        </a>
+        <a href="../discord/index.html" target="_blank" class="nav-social-btn discord" title="Join Discord">
+            <i class="fab fa-discord text-base"></i> DISCORD
+        </a>
+    </div>
 </div>
 
     <div class="site-container">
